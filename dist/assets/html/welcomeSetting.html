@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+    <script src="../../node_modules/xel/xel.js" type="module"></script>
+    <meta name="xel-theme" content="../../node_modules/xel/themes/cupertino-dark.css">
+    <meta name="xel-accent-color" content="purple">
+    <meta name="xel-icons" content="../../node_modules/xel/icons/fluent.svg">
+    <link href="./css/welcomeSetting.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <x-label id="label-subtitle" class="margin-left-15 margin-top-15"></x-label>
+    <div class="menu-div margin-top-10 margin-left-15">
+        <x-label class="padding-5" id="client-label"></x-label>
+        <x-input required id="client" size="small" style="margin-left: 5px;">
+            <x-label id="ex-client-label"></x-label>
+        </x-input>
+    </div>
+
+    <div class="menu-div margin-top-10 margin-left-15">
+        <x-label class="padding-10" id="adress-server-label"></x-label>
+        <x-input required id="adress-server" size="small">
+            <x-label id="ex-adress-server-label">192.168.1</x-label>
+        </x-input>
+    </div>
+
+    <div class="menu-div margin-top-10  margin-left-15">
+        <x-label class="padding-10" id="udp-label"></x-label>
+        <x-input class="width-50" required id="udp" size="small">
+            <x-label>ex: 4000</x-label>
+        </x-input>
+    </div>
+
+    <x-box id="buttons-manage">
+        <x-button id="save-properties" class="cursor-pointer">
+          <x-label id="label-save-properties"></x-label>
+        </x-button>
+    </x-box>
+
+    <x-notification id="notification"></x-notification>
+
+    <script src="../../welcomeSetting-renderer.js"></script>
+  </body> 
+</html>

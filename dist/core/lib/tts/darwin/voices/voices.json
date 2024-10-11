@@ -1,0 +1,16 @@
+[{
+	"default": true,
+	"name": "French female voice (mbrola)",
+	"gender": "female",
+	"language": "fr-fr",
+	"code": "mb-fr4",
+	"file": "/usr/share/mbrola/fr4/fr4"
+},
+{
+	"default": false,
+	"name": "French male voice (mbrola)",
+	"gender": "male",
+	"language": "fr-fr",
+	"code": "mb-fr1",
+	"file": "/usr/share/mbrola/fr1/fr1"
+}]
