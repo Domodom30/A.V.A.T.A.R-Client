@@ -459,7 +459,7 @@ function showPluginMenu (event, plugin, name) {
                 label: L.get("pluginStudioMenu.documentation"),
                 icon: path.resolve(__dirname, 'assets/images/icons/help.png'),
                 click: () => {
-                  if (!appClient) {
+                  if (!appProperties.http.client.port) {
                     return warn(L.get("mainInterface.errorHTTPServer"));
                   } 
                   if (docProps.static) {
