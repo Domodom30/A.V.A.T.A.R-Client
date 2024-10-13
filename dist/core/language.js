@@ -49,9 +49,12 @@ const PluginLanguages = {
         return pakList;
     },
     getPak: (plugin, locale) =>{
+        locale = locale === 'auto' ? getApp().getPreferredSystemLanguages()[0].split('-')[0] : locale;
+        if (!locale) return;
+
         for (let i in PluginLanguages.all) {
           if (PluginLanguages.all[i].plugin === plugin && PluginLanguages.all[i].locale === locale)
-            return PluginLanguages.all[i]
+            return PluginLanguages.all[i];
         }
     }
 }

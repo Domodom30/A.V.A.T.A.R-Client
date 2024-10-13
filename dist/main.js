@@ -133,7 +133,6 @@ function createWindow () {
         Avatar.Interface.showRestartBox = async (arg) => mainWindow.webContents.send('showRestartBox', arg);
         Avatar.Interface.quit = () => mainWindow.destroy();
         Avatar.Interface.openSettings = (init, voices) => openSettings(init, voices);
-        
         Avatar.Interface.mainWindow = () => {return mainWindow};
         Avatar.Interface.dialog = () => {return dialog};
         Avatar.Interface.BrowserWindow = (param, htmlfile, isMenu) => {
@@ -146,8 +145,7 @@ function createWindow () {
         Avatar.Interface.Menu = () => {return Menu};
         Avatar.Interface.shell = () => {return shell};
         Avatar.Interface.ipcMain = () => {return ipcMain};
-        Avatar.Interface.globalShortcut = () => {return globalShortcut};
-        
+        Avatar.Interface.globalShortcut = () => {return globalShortcut}; 
         Avatar.Interface.refreshWidgetInfo = async (arg) => {
           try { mainWindow.webContents.send('newPluginWidgetInfo', arg); } catch (err) {};
         }
@@ -239,7 +237,6 @@ function createWindow () {
       return appProperties.version;
     });
 }
-
 
 function backupRestore () {
   if (backupRestoreWindow) return backupRestoreWindow.show();
@@ -1022,13 +1019,16 @@ function setLParameters(str, arg) {
 const checkUpdate = async () => {
   if (Config.checkUpdate === true) {
     let result = await github.checkUpdate(mainWindow, Config);
-    console.log('ici', result)
     if (result === true) {
       await mainWindow.webContents.send('newVersion');
     }
   }
 }
 
+
+global.getApp = () => {
+  return app;
+}
 
 process.on('uncaughtException', function (err) {
   error('Caught exception: '+ err.stack)
