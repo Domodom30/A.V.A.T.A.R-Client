@@ -3,7 +3,7 @@ import * as http from 'node:http';
 import { default as scanIP } from 'evilscan';
 import { CronJob } from 'cron';
 import { io } from "socket.io-client";
-import { default as ss } from './lib/socket.io-stream/index.js';
+import { default as ss } from '../lib/socket.io-stream/index.js';
 import dgram from 'node:dgram';
 import { Buffer } from 'node:buffer';
 import * as url from 'url';
@@ -518,7 +518,7 @@ async function musicPlay(qs, callback) {
 	let ffplay;
 	switch (process.platform) {
 		case 'win32':
-			ffplay = path.resolve(__dirname, "lib/ffmpeg/win32/bin/ffplay");
+			ffplay = path.resolve(__dirname, "../lib/ffmpeg/win32/bin/ffplay");
 			break;
 		case 'linux':
 		case 'darwin':
@@ -571,7 +571,7 @@ async function musicStop(qs, callback) {
 
 function shutdown () {
 	const ext = process.platform === 'win32' ? ".bat" : ".sh"
-	const cmd = path.resolve(__dirname, "lib", "shutdown", process.platform, "shutdownOS" + ext);
+	const cmd = path.resolve(__dirname, "..", "lib", "shutdown", process.platform, "shutdownOS" + ext);
 	exec(cmd, (err, stdout, stderr) => {
 		if (err) error("Shutdown error:", stderr);
 	})
