@@ -702,7 +702,10 @@ function screenSaver () {
 
 
 async function testVoice (arg) {
-  if (arg.init === true) return;
+  if (arg.init === true) {
+    warn(L.get("settings.voiceTestError"));
+    return;
+  }
   if (arg.voice === 'by default') arg.voice = null;
   info(L.get("settings.testVoiceInfo"));
   Avatar.speak(arg.sentence, () => {

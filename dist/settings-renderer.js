@@ -970,7 +970,6 @@ async function setLangTargets() {
     document.getElementById('1-pitch-voice').innerHTML = await Lget("settings", "normalPitchVoice");
     document.getElementById('2-pitch-voice').innerHTML = await Lget("settings", "hightPitchVoice");
     document.getElementById('test-voices-label').innerHTML = await Lget("settings", "testTextVoice");
-    document.getElementById('test-voice-ex').innerHTML = await Lget("settings", "testSentenceVoice");
     document.getElementById('change-voice-label').innerHTML = await Lget("settings", "changeVoice");
     document.getElementById('change-voice-ex').innerHTML = await Lget("settings", "voiceChangeEx");
 

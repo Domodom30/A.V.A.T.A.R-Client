@@ -167,7 +167,6 @@
 	"normalPitchVoice": "Normal",
 	"hightPitchVoice": "High ",
 	"testTextVoice": "Test sentence:",
-	"testSentenceVoice": "this voice suits me. right ?",
 	"voiceTestError": "You cannot test a voice before the application has been fully initialized. Run the test again later.",
 	"testVoiceInfo": "Voice test...",
 	"changeVoice": "Voice ruler to change voices (loop on selected voices):",

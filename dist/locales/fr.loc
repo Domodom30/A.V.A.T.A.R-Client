@@ -167,7 +167,6 @@
 	"normalPitchVoice": "Normale",
 	"hightPitchVoice": "Aigue",
 	"testTextVoice": "Phrase de test:",
-	"testSentenceVoice": "Cette voix me va bien. Tu ne trouves pas ?",
 	"voiceTestError": "Vous ne pouvez pas tester une voix avant l'initialisation complète de l'application. Relancez le test plus tard.",
 	"testVoiceInfo": "Test de la voix...",
 	"changeVoice": "Règle vocale pour changer de voix (boucle sur les voix sélectionnées):",

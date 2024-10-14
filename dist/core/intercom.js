@@ -139,7 +139,7 @@ AudioRecorder.prototype.start = function() {
         this._childProcess.kill();
       }
       
-    let audiorecoder = path.join(__dirname, 'lib/sox', process.platform, this._options.program)
+    let audiorecoder = process.platform === 'win32' ? path.join(__dirname, '../lib/sox', process.platform, this._options.program) : 'sox';
     // Create new child process and give the recording commands.
     this._childProcess = spawn(audiorecoder, this._command.arguments);
 
