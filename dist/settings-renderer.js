@@ -919,7 +919,7 @@ async function setLangTargets() {
     document.getElementById('client-http-route-label').innerHTML = await Lget("settings", "httpclientRoute");
 
     if (appProperties.client !== '')
-        document.getElementById('client-http-route-ex-label').innerHTML = 'ex: '+appProperties.client.replace(' ','');
+        document.getElementById('client-http-route-ex-label').innerHTML = 'e.g. '+appProperties.client.replace(' ','');
 
     document.getElementById('client-label').innerHTML = await Lget("settings", "client");
     document.getElementById('ex-client-label').innerHTML = await Lget("settings", "exClient");
