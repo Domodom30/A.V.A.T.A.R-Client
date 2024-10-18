@@ -17,7 +17,7 @@ A.V.A.T.A.R client was developed on Windows 10 and Linux (Debian 12) using [Elec
 
 * Windows (Windows 10 and up): `ia32 (x86)`, `x64 (amd64)`, `arm64` ![Static Badge](https://img.shields.io/badge/release-tested-brightgreen)
 * Mac0S (Big Sur and up): `64-bit Intel` and `Apple Silicon / ARM binaries` for macOS. ![Static Badge](https://img.shields.io/badge/release-tested_ko-orange)
-	- The voices remain to be validated. Coming soon
+	- The system voices remain to be validated. Coming soon
 * Linux (Ubuntu 18.04 and newer, Fedora 32 and newer, Debian 10 and newer): `x64 (amd64)`, `arm64` ![Static Badge](https://img.shields.io/badge/release-tested-brightgreen)
 * Raspberry Pi (Raspberry Pi OS): `arm64` ![Static Badge](https://img.shields.io/badge/release-tested_ko-red)
 	- Chromium for Raspberry Pi OS: No voices and voice regognition 
