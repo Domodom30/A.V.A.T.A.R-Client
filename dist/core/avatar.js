@@ -105,6 +105,7 @@ function initClient (prop, electronEncrypt) {
 		Avatar.decrypt = decrypt;
 		Avatar.play = play;
 		Avatar.stop = stop;
+		Avatar.getProperty = getProperty;
 
 		fs.ensureDirSync(path.resolve(__dirname, 'plugins')); 
 
@@ -575,6 +576,20 @@ function shutdown () {
 	exec(cmd, (err, stdout, stderr) => {
 		if (err) error("Shutdown error:", stderr);
 	})
+}
+
+
+function getProperty(file, property) {
+	if (fs.existsSync(file)) {
+		const properties = fs.readJsonSync(file, { throws: false });
+		if (property && Object.prototype.hasOwnProperty.call(properties, property)) {
+				return property[property];
+		} else {
+			return properties;
+		}
+	} else {
+		return {};
+	}
 }
 
 export { initClient}; 
