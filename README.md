@@ -16,7 +16,7 @@ This project is A.V.A.T.A.R client only. You need to download and install the [A
 A.V.A.T.A.R client was developed on Windows 10 and Linux (Debian 12) using [Electron](https://www.electronjs.org/) framework and [Node.js](https://nodejs.org/)
 
 * Windows (Windows 10 and up): `ia32 (x86)`, `x64 (amd64)`, `arm64` ![Static Badge](https://img.shields.io/badge/release-tested-brightgreen)
-* Mac0S (Big Sur and up): `64-bit Intel` and `Apple Silicon / ARM binaries` for macOS. ![Static Badge](https://img.shields.io/badge/release-tested_ko-orange)
+* Mac0S (Big Sur and up): `64-bit Intel` and `Apple Silicon / ARM binaries` for macOS. ![Static Badge](https://img.shields.io/badge/release-tested-orange)
 	- The system voices remain to be validated. Coming soon
 * Linux (Ubuntu 18.04 and newer, Fedora 32 and newer, Debian 10 and newer): `x64 (amd64)`, `arm64` ![Static Badge](https://img.shields.io/badge/release-tested-brightgreen)
 * Raspberry Pi (Raspberry Pi OS): `arm64` ![Static Badge](https://img.shields.io/badge/release-tested_ko-red)
