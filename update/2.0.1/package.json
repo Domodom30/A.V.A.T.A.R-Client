@@ -46,5 +46,8 @@
     "talisman": "^1.1.4",
     "underscore": "^1.13.6",
     "xel": "^0.28.5"
+  },
+  "devDependencies": {
+    "electron": "^33.0.2"
   }
 }
