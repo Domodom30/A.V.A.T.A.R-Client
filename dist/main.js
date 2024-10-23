@@ -303,7 +303,7 @@ async function applyBackupRestore(arg) {
           else 
             return false;
         } else if (arg.reason === 'default') { 
-          shell.trashItem(path.resolve(location.property));
+          await shell.trashItem(path.resolve(location.property));
         }
         return true;
       case 1: 
@@ -315,7 +315,7 @@ async function applyBackupRestore(arg) {
           else 
             return false;
         } else if (arg.reason === 'default') { 
-          shell.trashItem(path.resolve(location.interface));
+          await shell.trashItem(path.resolve(location.interface));
         }
         return true;
       case 2: 
@@ -497,7 +497,7 @@ async function deletePlugin (event, plugin) {
   const answer = dialog.showMessageBoxSync(settingsWindow, options);
   if (answer === 0) {
     if (Avatar.Plugin.exists(plugin)) Avatar.Plugin.removeCache(plugin);
-    shell.trashItem(pluginFolder);
+    await shell.trashItem(pluginFolder);
     event.sender.send('delete-Plugin', plugin);
   }
 
@@ -530,7 +530,7 @@ function encrypt() {
   encryptWindow.loadFile('./assets/html/encrypt.html');
   encryptWindow.setMenu(null);
    
-  encryptWindow.once('ready-to-show', () => {
+  encryptWindow.once('ready-to-show', async () => {
     encryptWindow.show();
     const passwdFile = path.resolve(__dirname, "lib/encrypt/encrypt.json");
     let passwd = null;
@@ -540,7 +540,7 @@ function encrypt() {
         passwd = Avatar.decrypt(encrypted.password);
        } catch (err) {
           error ('Error:', err && err.length > 0 ? err : 'Error while decrypting the password. The password has been removed')
-          shell.trashItem(passwdFile);
+          await shell.trashItem(passwdFile);
           passwd = null;
        }
     }

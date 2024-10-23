@@ -61,7 +61,7 @@ async function widgetAction(arg, periphInfos) {
 
 async function deleteWidget(widget) {
     if (!widget) return false;
-    shell.trashItem(path.resolve (widgetPath, widget+'.json'));
+    await shell.trashItem(path.resolve (widgetPath, widget+'.json'));
     return true;   
 }
 
