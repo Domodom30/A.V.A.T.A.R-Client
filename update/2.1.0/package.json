@@ -1,6 +1,6 @@
 {
   "name": "A.V.A.T.A.R-Client",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "A.V.A.T.A.R client",
   "main": "main.js",
   "type": "module",
@@ -16,6 +16,7 @@
   "dependencies": {
     "@jollie/soundex-fr": "^1.0.8",
     "axios": "^1.6.8",
+    "bluebird": "^3.7.2",
     "clipboard": "^2.0.11",
     "component-bind": "^1.0.0",
     "cron": "^3.1.6",
