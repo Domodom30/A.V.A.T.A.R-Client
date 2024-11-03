@@ -1043,10 +1043,10 @@ const checkUpdate = async () => {
   if (fs.existsSync(path.resolve(__dirname, 'tmp', 'step-3.txt'))) {
     fs.removeSync(path.resolve(__dirname, 'tmp', 'step-3.txt'));
     if (process.platform === 'linux') fs.removeSync(path.resolve(__dirname, 'tmp', 'shell.sh'));
-    Avatar.HTTP.socket.emit('installClientVersionDone');
+    Avatar.HTTP.socket.emit('installClientVersionDone', appProperties.client);
     return infoGreen(L.get('newVersion.step3'));
   }
-
+    
   if (fs.existsSync(path.resolve(__dirname, 'tmp', 'step-2.txt'))) {
     let installType = fs.readFileSync(path.resolve(__dirname, 'tmp', 'step-2.txt'), 'utf8');
     installType = installType.split('-');
@@ -1056,7 +1056,7 @@ const checkUpdate = async () => {
       //const result = await github.checkUpdate(mainWindow);
       //if (result !== false) {
         //await mainWindow.webContents.send('newVersion', result);
-        await mainWindow.webContents.send('newVersion', '2.0.1');
+        await mainWindow.webContents.send('newVersion', '2.1.0');
       //}
     }
   }
