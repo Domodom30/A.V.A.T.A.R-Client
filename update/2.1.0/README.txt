@@ -1,7 +1,7 @@
-Version 2.0.1
+Version 2.1.0
 *************
 Installation type:
-- This version requires packages to be installed or updated
+- This version requires the creation of a new version
 
 Installation:
 - Follow "Installation"->"Update the server/client" of the documentation.
