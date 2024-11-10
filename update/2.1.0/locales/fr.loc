@@ -79,7 +79,7 @@
 	"newVersionMsg": "Que voulez-vous faire ?",
 	"newVersionDetail": "Ce client uniquement: déploye la mise à jour uniquement sur ce client.\nTous les clients: déploye la mise à jour sur tous les clients connectés.",
 	"clientOnly": "Ce client uniquement",
-	"allClient": "Tous les clients",
+	"allClients": "Tous les clients",
 	"cancelupdate": "Plus tard",
 	"download": "Réception d'une nouvelle version $$ ! patientez pendant la mise à jour...",
 	"errorOpenTerminal": "Impossible d'ouvrir la fenêtre de mise à jour de la nouvelle version $$: $$",
