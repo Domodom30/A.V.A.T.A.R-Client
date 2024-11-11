@@ -131,10 +131,7 @@ function createWindow () {
         };
         
         Avatar.Interface.showRestartBox = async (arg) => mainWindow.webContents.send('showRestartBox', arg);
-        Avatar.Interface.quit = () => {
-          mainWindow.destroy();
-          app.quit();
-        }
+        Avatar.Interface.quit = () => mainWindow.destroy();
         Avatar.Interface.openSettings = (init, voices) => openSettings(init, voices);
         Avatar.Interface.mainWindow = () => {return mainWindow};
         Avatar.Interface.dialog = () => {return dialog};
@@ -216,7 +213,6 @@ function createWindow () {
     ipcMain.handle('testVoice' , async (event, arg) => {return testVoice(arg)});
     ipcMain.handle('dialog:openFile', handleFileOpen);
     ipcMain.handle('dialog:openScreenSaverFile', handleScreenSaverFileOpen);
-    ipcMain.handle('dialog:openPowershellFile', handlePowershellFileFileOpen);
     ipcMain.handle('applyWelcomeProperties', (event, arg) => {
       fs.writeJsonSync(path.resolve(__dirname, 'core/Avatar.prop'), arg);
       welcomeSettingWindow.destroy();
@@ -307,7 +303,7 @@ async function applyBackupRestore(arg) {
             fs.copySync(arg.folder + '/core/Avatar.prop', location.property);
           else 
             return false;
-        } else if (arg.reason === 'default') { 
+        } else if (arg.reason === 'default' && fs.existsSync(location.property)) { 
           await shell.trashItem(path.resolve(location.property));
         }
         return true;
@@ -319,7 +315,7 @@ async function applyBackupRestore(arg) {
             fs.copySync(arg.folder + '/assets/config/interface.prop', location.interface);
           else 
             return false;
-        } else if (arg.reason === 'default') { 
+        } else if (arg.reason === 'default' && fs.existsSync(location.interface)) { 
           await shell.trashItem(path.resolve(location.interface));
         }
         return true;
@@ -586,25 +582,6 @@ async function handleScreenSaverFileOpen () {
 }
 
 
-async function handlePowershellFileFileOpen () {
-  const options = {
-    title: L.get("settings.screensavertitle"),
-    defaultPath: path.resolve (__dirname),
-    filters: [{
-      name: 'Powershell exe',
-      extensions: ['exe']
-    }],
-    properties: ['openFile', 'noResolveAliases']
-  };
-
-  const { canceled, filePaths } = await dialog.showOpenDialog(settingsWindow, options);
-
-  if (!canceled) {
-    return filePaths[0];
-  }
-}
-
-
 async function isCloseApp() {
 
   let options = 
@@ -656,7 +633,6 @@ async function closeApp(arg, flag) {
   
   if (flag) {
     mainWindow.destroy();
-    app.quit();
   } else {
     app.relaunch();
     app.exit();
@@ -1003,13 +979,15 @@ if (!gotTheLock) {
 
     app.on('activate', function () {
       if (mainWindow === null) createWindow();
+      // On macOS it's common to re-create a window in the app when the
+      // dock icon is clicked and there are no other windows open.
       if (BrowserWindow.getAllWindows().length === 0) createWindow();
     })
 
   })
 
   app.on('window-all-closed',() => {
-    app.quit();
+    if (process.platform !== 'darwin') app.quit();
   })
 
   app.on('will-quit', () => {
@@ -1077,7 +1055,8 @@ const checkUpdate = async () => {
     if (Config.checkUpdate === true) {
       //const result = await github.checkUpdate(mainWindow);
       //if (result !== false) {
-        await mainWindow.webContents.send('newVersion', "2.1.0");
+        //await mainWindow.webContents.send('newVersion', result);
+        await mainWindow.webContents.send('newVersion', '2.1.0');
       //}
     }
   }
