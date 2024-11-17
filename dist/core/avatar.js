@@ -416,7 +416,7 @@ function runApp( qs, callback) {
 
 	appInfo(L.get(['mainInterface.runApp', qs.run]));
 
-	exec(cmd, (err, stdout, stderr) => {
+	exec(qs.run, (err, stdout, stderr) => {
 		if (err) error(L.get(['mainInterface.runAppError', (stderr || err || 'Unknow')]));
 		if (qs.sync) Avatar.HTTP.socket.emit('callback', callback);
 	});
