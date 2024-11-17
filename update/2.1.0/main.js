@@ -151,6 +151,7 @@ function createWindow () {
         }
         screenSaver();
         checkUpdate();
+        await mainWindow.webContents.send('readyToMenu');
       }
 
     });
@@ -1053,11 +1054,10 @@ const checkUpdate = async () => {
     Avatar.HTTP.socket.emit('sendNewClientVersion', ((installType[1] === '0') ? appProperties.client : null), installType[0]);
   } else {
     if (Config.checkUpdate === true) {
-      //const result = await github.checkUpdate(mainWindow);
-      //if (result !== false) {
-        //await mainWindow.webContents.send('newVersion', result);
-        await mainWindow.webContents.send('newVersion', '2.1.0');
-      //}
+      const result = await github.checkUpdate(mainWindow);
+      if (result !== false) {
+        await mainWindow.webContents.send('newVersion', result);
+      }
     }
   }
 }

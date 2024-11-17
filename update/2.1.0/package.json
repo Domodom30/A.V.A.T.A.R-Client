@@ -1,6 +1,6 @@
 {
   "name": "A.V.A.T.A.R-Client",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "A.V.A.T.A.R client",
   "main": "main.js",
   "type": "module",
@@ -49,6 +49,6 @@
     "xel": "^0.28.5"
   },
   "devDependencies": {
-    "electron": "^33.0.2"
+    "electron": "^33.2.0"
   }
 }

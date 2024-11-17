@@ -1,0 +1,9 @@
+{
+  "name": "A.V.A.T.A.R-Client",
+  "description": "A.V.A.T.A.R client",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "favicon.ico"
+  }
+}
