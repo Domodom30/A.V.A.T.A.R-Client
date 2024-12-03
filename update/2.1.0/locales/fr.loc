@@ -266,7 +266,7 @@
 	"sameItem": "Impossible de sélectionner cette règle.<br>Elle existe aussi dans une autre liste dans un autre onglet.<br>Vous pouvez supprimer toute la liste ou modifier légèrement cette règle pour pouvoir la sélectionner",
 	"update": "Mise à jour",
 	"powershell": "Sélectionner...",
-	"powershellVersion": "Version de PowerShell supérieure ou égale à 7.0:",
+	"powershellVersion": "Windows seulement: Version de PowerShell supérieure ou égale à 7.0:",
 	"powershellTitle": "Sélectionnez l'exécutable PowerShell"
   },
   "menu": {

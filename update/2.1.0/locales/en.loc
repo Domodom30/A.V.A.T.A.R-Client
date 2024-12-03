@@ -266,7 +266,7 @@
 	"sameItem": "Unable to select this rule.<br>It exists in another list in another tab.<br>You can delete the entire list or slightly modify this rule to be able to select it.",
 	"update": "Update",
 	"powershell": "Select...",
-	"powershellVersion": "Version of PowerShell greater than or equal to 7.0:",
+	"powershellVersion": "Windows only: PowerShell version greater than or equal to 7.0:",
 	"powershellTitle": "Select the PowerShell executable"
   },
   "menu": {
