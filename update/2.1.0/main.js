@@ -152,6 +152,8 @@ function createWindow () {
         screenSaver();
         checkUpdate();
         await mainWindow.webContents.send('readyToMenu');
+      } else {
+        await mainWindow.webContents.send('readyToMenu');
       }
 
     });
@@ -213,6 +215,7 @@ function createWindow () {
     ipcMain.handle('showMenu' , async (event, arg) => {return showMenu(arg)});
     ipcMain.handle('testVoice' , async (event, arg) => {return testVoice(arg)});
     ipcMain.handle('dialog:openFile', handleFileOpen);
+    ipcMain.handle('dialog:openPowershellFile', handlePowershellFileFileOpen);
     ipcMain.handle('dialog:openScreenSaverFile', handleScreenSaverFileOpen);
     ipcMain.handle('applyWelcomeProperties', (event, arg) => {
       fs.writeJsonSync(path.resolve(__dirname, 'core/Avatar.prop'), arg);
@@ -285,6 +288,23 @@ async function handleBackupFolderOpen() {
 
 }
 
+async function handlePowershellFileFileOpen () {
+  const options = {
+    title: L.get("settings.powershellTitle"),
+    defaultPath: path.resolve (__dirname),
+    filters: [{
+      name: 'PowerShell exe',
+      extensions: ['exe']
+    }],
+    properties: ['openFile', 'noResolveAliases']
+  };
+
+  const { canceled, filePaths } = await dialog.showOpenDialog(settingsWindow, options);
+
+  if (!canceled) {
+    return filePaths[0];
+  }
+}
 
 async function applyBackupRestore(arg) {
 

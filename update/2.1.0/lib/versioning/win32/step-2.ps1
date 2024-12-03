@@ -1,7 +1,7 @@
-Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
-Write-Host "█        A.V.A.T.A.R CLIENT VERSION UPDATE - STEP 2/2               █"
-Write-Host "█                        Windows installer                          █"
-Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
+Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
+Write-Host "█        A.V.A.T.A.R CLIENT VERSION UPDATE - STEP 2/2               █" -ForegroundColor DarkMagenta
+Write-Host "█                        Windows installer                          █" -ForegroundColor DarkMagenta
+Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
 #■ A.V.A.T.A.R 29/10/2024
 
 Start-Sleep -Seconds 3
@@ -165,16 +165,16 @@ start-process -filepath "$app_location/A.V.A.T.A.R-Client.exe" -workingdirectory
 Write-Host " done" -ForegroundColor Green
 Start-Sleep -Seconds 1
 
-Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
-Write-Host "█                                                                              █"
-Write-Host "█                 Step 2 of the new $version version installation                 █"
-Write-Host "█                        has been successfully completed!                      █"
-Write-Host "█                  As the server was started with this terminal,               █"
-Write-Host "█                   if you close it, you also close the server!                █"
-Write-Host "█                                                                              █"
-Write-Host "█  You may wish to consult the installation 'update-$version-step2.log' file      █"
-Write-Host "█                             in the app/tmp directory                         █"
-Write-Host "█                                                                              █"
-Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
+Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
+Write-Host "█                                                                              █" -ForegroundColor DarkMagenta
+Write-Host "█                 Step 2 of the new $version version installation                 █" -ForegroundColor DarkMagenta
+Write-Host "█                        has been successfully completed!                      █" -ForegroundColor DarkMagenta
+Write-Host "█                  As the client was started with this terminal,               █" -ForegroundColor DarkMagenta
+Write-Host "█                   if you close it, you also close the client!                █" -ForegroundColor DarkMagenta
+Write-Host "█                                                                              █" -ForegroundColor DarkMagenta
+Write-Host "█  You may wish to consult the installation 'update-$version-step2.log' file      █" -ForegroundColor DarkMagenta
+Write-Host "█                             in the app/tmp directory                         █" -ForegroundColor DarkMagenta
+Write-Host "█                                                                              █" -ForegroundColor DarkMagenta
+Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
 
 Stop-Transcript
