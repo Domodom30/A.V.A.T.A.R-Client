@@ -1,0 +1,269 @@
+{
+  "name": "A.V.A.T.A.R Client",
+  "version": "2.2.0",
+  "client": "",
+  "language": "en",
+  "verbose": true,
+  "restart": 0,
+  "mnToRestart": 7,
+  "AKA": {
+    "fr-FR": [
+      "sarah",
+      "jarvis"
+    ],
+    "en-GB": [
+      "sarah",
+      "jarvis"
+    ]
+  },
+  "screenSaver": {
+    "exec": "",
+    "timeout": 10000,
+    "active": false
+  },
+  "voices": {
+    "change": {
+      "fr-FR": "",
+      "en-GB": ""
+    },
+    "test": {
+      "fr-FR": "",
+      "en-GB": ""
+    },
+    "active": {
+      "fr-FR": {
+        "web-voice": [],
+        "local-voice": []
+      },
+      "en-GB": {
+        "web-voice": [],
+        "local-voice": []
+      }
+    },
+    "type": {
+      "fr-FR": "web-voice",
+      "en-GB": "web-voice"
+    },
+    "speed": {
+      "fr-FR": {
+        "web-voice": 80,
+        "local-voice": 50
+      },
+      "en-GB": {
+        "web-voice": 80,
+        "local-voice": 50
+      }
+    },
+    "volume": {
+      "fr-FR": {
+        "web-voice": 100,
+        "local-voice": 100
+      },
+      "en-GB": {
+        "web-voice": 100,
+        "local-voice": 100
+      }
+    },
+    "pitch": 1,
+    "current": {
+      "fr-FR": {
+        "web-voice": "",
+        "local-voice": ""
+      },
+      "en-GB": {
+        "web-voice": "",
+        "local-voice": ""
+      }
+    },
+    "mapping": [
+      {
+        "left": "best-of-vox damien (fran",
+        "right": "ais)",
+        "include": "ç"
+      }
+    ]
+  },
+  "http": {
+    "server": {
+      "port": "3000"
+    },
+    "client": {
+      "ip": "127.0.0.1",
+      "port": "",
+      "route": ""
+    }
+  },
+  "UDP": {
+    "port": "3333",
+    "target": "",
+    "restart": 15
+  },
+  "speech": {
+    "speechToText": "chrome",
+    "server_speak": false,
+    "module": "",
+    "timeout": 0,
+    "locale": "en-GB"
+  },
+  "listen": {
+    "threashold": 0.6,
+    "loop_mode": false,
+    "timeout": 9
+  },
+  "intercom": {
+    "debug": false,
+    "silence": 2,
+    "driver": "waveaudio",
+    "device": "default",
+    "thresholdStart": 0.5,
+    "thresholdStop": 0.4,
+    "locale": {
+      "fr-FR": {
+        "rules": [
+          "intercom avec"
+        ],
+        "global": [
+          "intercom général",
+          "inter comme générale",
+          "intercom générale",
+          "intercom general"
+        ],
+        "start": [
+          "Je t'écoute"
+        ],
+        "send": [
+          "J'envoie le message"
+        ]
+      },
+      "en-GB": {
+        "rules": [
+          "intercom with"
+        ],
+        "global": [
+          "general intercom"
+        ],
+        "start": [
+          "ready",
+          "ready to record"
+        ],
+        "send": [
+          "I send the message"
+        ]
+      }
+    }
+  },
+  "locale": {
+    "fr-FR": {
+      "restart": [
+        "recommence",
+        "encore"
+      ],
+      "tts_restoreContext": [
+        "Oui ?",
+        "Je suis là",
+        "je t'écoute"
+      ],
+      "tts_restart_restoreContext": [
+        "Je peux faire autre chose ?",
+        "Tu veux autre chose ?",
+        "autre chose ?"
+      ],
+      "tts_cancel": [
+        "je ne t'ai rien demandé",
+        "non rien",
+        "non merci",
+        "annulé",
+        "annuler",
+        "non rien",
+        "annule"
+      ],
+      "answers_cancel": [
+        "Pardon",
+        "désolé",
+        "Sorri",
+        "Excuse",
+        "d'accord",
+        "reçu",
+        "pas d'soucis",
+        "J'ai cru"
+      ],
+      "tts_thank": [
+        "merci",
+        "c'est tout",
+        "ca sera tout merci",
+        "terminer",
+        "ca sera tout",
+        "c'est bon",
+        "non c'est bon merci",
+        "c'est tout",
+        "non c'est bon"
+      ],
+      "answers_thank": [
+        "à ton service",
+        "avec plaisir"
+      ]
+    },
+    "en-GB": {
+      "restart": [
+        "start again, i did not understand",
+        "start again"
+      ],
+      "tts_restoreContext": [
+        "yes?",
+        "here I am",
+        "i'm listening to you"
+      ],
+      "tts_restart_restoreContext": [
+        "anything else?",
+        "is there anything else i can do?",
+        "would you like anything else?"
+      ],
+      "tts_cancel": [
+        "i didn't ask you",
+        "no nothing",
+        "cancel",
+        "no thanks",
+        "cancelled"
+      ],
+      "answers_cancel": [
+        "sorry",
+        "i thought",
+        "agreed",
+        "received",
+        "no worries"
+      ],
+      "tts_thank": [
+        "thank you",
+        "it is good",
+        "no it is fine thanks"
+      ],
+      "answers_thank": [
+        "with pleasure",
+        "your are welcome"
+      ]
+    }
+  },
+  "action_separators": {
+    "fr-FR": [
+      "puis",
+      "et"
+    ],
+    "en-GB": [
+      "then",
+      "and"
+    ]
+  },
+  "refresh_AKA": {
+    "fr-FR": [
+      "redémarre l'écoute"
+    ],
+    "en-GB": [
+      "restart listening",
+      "refresh listening"
+    ]
+  },
+  "repository": "Avatar-Home-Automation/A.V.A.T.A.R-Client",
+  "docs": "https://avatar-home-automation.github.io/docs/",
+  "powerShell": "",
+  "checkUpdate": true
+}

@@ -1,0 +1,83 @@
+{
+
+  "name": "simpletts",
+  "version": "2.6.0",
+  "description": "A basic TTS manager",
+
+  "type": "commonjs",
+  "typings": "./lib/cjs/main.d.cts",
+  "main": "./lib/cjs/main.cjs",
+  
+
+  "scripts": {
+
+    "build": "node ./removeOldBuild.js && npx tsc --project \"./tsconfig.json\"",
+
+    "lint": "npx eslint ./test/**/*.js",
+    "check-requires": "npx used-deps-analyzer \"./package.json\" \"./src\" --no-dev --overkill \"fs-extra\" \"node-promfs\"",
+    "check-updates": "npx check-version-modules",
+    "unit-tests": "npm run build && npx nyc --reporter=html --reporter=text mocha",
+
+    "tests": "npm run-script lint && npm run check-requires && npm run-script check-updates && npm run-script unit-tests",
+    "ci": "npm run-script tests && npx nyc report --reporter=text-lcov | coveralls"
+
+  },
+
+  "bin": {
+    "simpletts": "./bin/cmd.js"
+  },
+
+  "files": [
+    "/batchs",
+    "/bin",
+    "/lib"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "20.5.1",
+    "check-version-modules": "1.4.1",
+    "coveralls": "3.1.1",
+    "eslint": "8.47.0",
+    "husky": "8.0.3",
+    "mocha": "10.2.0",
+    "nyc": "15.1.0",
+    "typescript": "5.1.6",
+    "used-deps-analyzer": "0.1.6"
+  },
+  "optionalDependencies": {},
+
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run-script lint",
+      "pre-push": "npm run-script tests"
+    }
+  },
+  "keywords": [
+    "tts",
+    "speech",
+    "text",
+    "text to speech",
+    "text-to-speech"
+  ],
+  "author": "Sébastien VIDAL",
+  "contributors": [
+    "taffeldt",
+    "JDBar",
+    "KristjanESPERANTO"
+  ],
+  "license": "ISC",
+
+  "homepage": "https://github.com/Psychopoulet/simpletts#readme",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Psychopoulet/simpletts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Psychopoulet/simpletts/issues"
+  }
+
+}

@@ -1,0 +1,222 @@
+{
+	"1": {
+		"tag": "fr-FR",
+		"region": "Standard French (especially in France)",
+		"code": "40C"
+	},
+	"2": {
+		"tag": "en-US",
+		"region": "US English",
+		"code": "409"
+	},
+	"3": {
+		"tag": "en-GB",
+		"region": "British English",
+		"code": "809"
+	},
+	"4": {
+		"tag": "de-DE",
+		"region": "Standard German (as spoken in Germany)",
+		"code": "407"
+	},
+	"5": {
+		"tag": "es-ES",
+		"region": "Castilian Spanish (as spoken in Central-Northern Spain)",
+		"code": "40A"
+	},
+	"6": {
+		"tag": "it-IT",
+		"region": "Standard Italian (as spoken in Italy)",
+		"code": "410"
+	},
+	"7": {
+		"tag": "ar-SA",	
+		"region": "Arabic (Saudi Arabia)",
+		"code": "401"
+	},	
+	"8": {
+		"tag": "ar-SA",	
+		"region": "Arabic (Egypt)",
+		"code": "C01"
+	},
+	"9": {
+		"tag": "zh-CH",	
+		"region": "Chinese (Simplified)",
+		"code": "004"
+	},
+	"10": {
+		"tag": "da-DK",
+		"region": "Danish (Denmark)",
+		"code": "406"
+	},
+	"11": {
+		"tag": "de-CH",
+		"region": "'Swiss' German",
+		"code": "807"
+	},
+	"12": {
+		"tag": "en-AU",
+		"region": "Australian English",
+		"code": "C09"
+	},
+	"13": {
+		"tag": "en-CA",
+		"region": "Canadian English",
+		"code": "009"
+	},
+	"14": {
+		"tag": "bg-BG",	
+		"region": "Bulgarian (Bulgaria)",
+		"code": "402"
+	},
+	"15": {
+		"tag": "ko-KR",
+		"region": "Korean (Republic of Korea)",
+		"code": "412"
+	},
+	"16": {
+		"tag": "hr-HR",
+		"region": "Croatian (Croatia)",
+		"code": "41A"
+	},
+	"17": {
+		"tag": "es-MX",
+		"region": "Mexican Spanish",
+		"code": "80A"
+	},
+	"18": {
+		"tag": "fi-FI",
+		"region": "Finnish (Finland)",
+		"code": "40B"
+	},
+	"19": {
+		"tag": "fr-CA",
+		"region": "Canadian French",
+		"code": "C0C"
+	},
+	"20": {
+		"tag": "fr-CH",
+		"region": "'Swiss' French",
+		"code": "00C"
+	},
+	"21": {
+		"tag": "el-GR",
+		"region": "Modern Greek",
+		"code": "408"
+	},
+	"22": {
+		"tag": "hi-IN",
+		"region": "Hindi (India)",
+		"code": "439"
+	},
+	"23": {
+		"tag": "hu-HU",
+		"region": "Hungarian (Hungary)",
+		"code": "40E"
+	},
+	"24": {
+		"tag": "he-IL",
+		"region": "Hebrew (Israel)",
+		"code": "40D"
+	},
+	"25": {
+		"tag": "id-ID",
+		"region": "Indonesian (Indonesia)",
+		"code": "421"
+	},
+	"26": {
+		"tag": "ja-JP",
+		"region": "Japanese (Japan)",
+		"code": "411"
+	},
+	"27": {
+		"tag": "ms-MY",
+		"region": "Malay (Malaysia)",
+		"code": "43e"
+	},
+	"28": {
+		"tag": "nn-NO",
+		"region": "Norwegian (Norway)",
+		"code": "814"
+	},
+	"29": {
+		"tag": "fr-BE",
+		"region": "Belgian French",
+		"code": "80C"
+	},
+	"30": {
+		"tag": "nl-NL",
+		"region": "Standard Dutch (as spoken in The Netherlands)",
+		"code": "413"
+	},
+	"31": {
+		"tag": "pl-PL",
+		"region": "Polish (Poland)",
+		"code": "415"
+	},
+	"32": {
+		"tag": "pt-BR",
+		"region": "Brazilian Portuguese",
+		"code": "416"
+	},
+	"33": {
+		"tag": "pt-PT",
+		"region": "European Portuguese (as written and spoken in Portugal)",
+		"code": "816"
+	},
+	"34": {
+		"tag": "ro-RO",
+		"region": "Romanian (Romania)",
+		"code": "418"
+	},
+	"35": {
+		"tag": "ru-RU",
+		"region": "Russian (Russian Federation)",
+		"code": "419"
+	},
+	"36": {
+		"tag": "sk-SK",
+		"region": "Slovak (Slovakia)",
+		"code": "41B"
+	},
+	"37": {
+		"tag": "sv-SE",
+		"region": "Swedish (Sweden)",
+		"code": "41D"
+	},
+	"38": {
+		"tag": "ta-IN",
+		"region": "Indian Tamil",
+		"code": "449"
+	},
+	"39": {
+		"tag": "cs-CZ",
+		"region": "Czech (Czech Republic)",
+		"code": "405"
+	},
+	"40": {
+		"tag": "th-TH",
+		"region": "Thai (Thailand)",
+		"code": "41E"
+	},
+	"41": {
+		"tag": "tr-TR",
+		"region": "Turkish (Turkey)",
+		"code": "41F"
+	},
+	"42": {
+		"tag": "vi-VN",
+		"region": "Vietnamese (Vietnam)",
+		"code": "42A"
+	},
+	"43": {
+		"tag": "zh-HK",
+		"region": "Hong Kong, traditional characters",
+		"code": "C04"
+	},
+	"44": {
+		"tag": "ar-001",
+		"region": "Arabic (World)",
+		"code": "859"
+	}
+}
