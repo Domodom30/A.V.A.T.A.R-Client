@@ -1,1 +1,0 @@
-{"modules":{"chrome":{"port":5200,"key":"","cert":"","address":"","timeout_ready":10,"timeout_emit":150,"headless":true,"log":false}}}
