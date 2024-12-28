@@ -1,31 +1,112 @@
 # testing commands
 # ./installer.ps1 -directory "c:\avatar\server" -shortcut
 # ./installer.ps1 -directory "c:\avatar\client" -onlycertificate
-# ./installer.ps1 -installer
-# ./installer.ps1 -installer -usecertificate "C:/Avatar-dev/installer/client/certificates/hote"
+# ./installer.ps1 -application
+# ./installer.ps1 -application -usecertificate "C:/Avatar-dev/installer/client/certificates/hote"
 # ./installer.ps1 -directory "C:\Avatar-dev\Windows-client.2.0" -onlycertificate -usecertificate "C:/Avatar-dev/installer/client/certificates/hote"
-# ./installer.ps1 -installer -onlycertificate -usecertificate "C:/Avatar-dev/installer/client/certificates/hote"
+# ./installer.ps1 -application -onlycertificate -usecertificate "C:/Avatar-dev/installer/client/certificates/hote"
 # ./installer.ps1 -directory "/avatar/server" -shortcut
 
 # Parameters
 param (
     [string[]]$directory,
     [string[]]$usecertificate,
-    [switch]$installer,
+    [switch]$application,
     [switch]$shortcut,
     [switch]$uninstall,
+    [switch]$updateChrome,
     [switch]$onlycertificate,
     [switch]$nocertificate,
     [switch]$nochrome,
     [switch]$nosox,
     [switch]$noffmpeg,
-    [switch]$noopenssl,
     [switch]$nohostName,
-    [switch]$onlyapp
+    [switch]$onlyapp,
+    [switch]$help
 )
 
-$platform = if ($(Get-Variable IsWindows -Value)) { "win32" } elseif ($(Get-Variable IsLinux -Value)) { "linux" } elseif ($(Get-Variable IsMacOS -Value)) { "darwin" } else { $null }
 
+function Show-Help {
+    Write-Host "Usage: installer.ps1 [options]"
+    Write-Host "Installer options:" -ForegroundColor Yellow
+    Write-Host "-help            : Display this help."
+    Write-Host "-directory       : All platforms. Specify the directory path to be used for installation."
+    Write-Host "-application     : macOS and Linux only. Install the client as an application accessible via Finder or the Dock."
+    Write-Host "-shortcut        : Windows and Linux only. Create an application icon on the user's desktop."
+    Write-Host "-updateChrome    : All platforms. Update the embedded Google Chrome only. Must be used with the -application or -directory parameter to specify the location of the application."
+    Write-Host "-usecertificate  : All platforms. Use the HTTPS certificates from the specified directory."
+    Write-Host "-onlycertificate : All platforms. Create HTTPS certificates only. Must be used with the -application or -directory parameter to specify the client directory where the certificates will be copied."
+    Write-Host "-nocertificate   : All platforms. Do not create and install the HTTPS certificate in the keystore and no configuration of the client is made."
+    Write-Host " "
+    Write-Host "Description:" -ForegroundColor Yellow
+    Write-Host "This script performs an installation by managing specific directories."
+    Write-Host "If an existing directory is detected, it will be removed."
+    Write-Host " "
+    Write-Host "Uninstaller options:" -ForegroundColor Yellow   
+    Write-Host "-uninstall       : Specifies if it is an uninstallation." 
+    Write-Host "-directory       : All platforms. Specify the path of the directory to be removed."
+    Write-Host "-application     : macOS and Linux only. Uninstall the client accessible via Finder or the Dock."
+    Write-Host "-onlyapp         : Uninstall the client EXCEPT:"
+    Write-Host "                   For Windows:"
+    Write-Host "                        Embedded Google Chrome."
+    Write-Host "                        The HTTPS certificate in the keystore."    
+    Write-Host "                   For linux:"
+    Write-Host "                        Embedded Google Chrome."
+    Write-Host "                        The HTTPS certificate in the keystore."
+    Write-Host "                        Sox"
+    Write-Host "                        ffmpeg"
+    Write-Host "                   For macOS:"
+    Write-Host "                        Embedded Google Chrome."
+    Write-Host "                        The HTTPS certificate in the keystore."
+    Write-Host "                        Sox"
+    Write-Host "                        ffmpeg"
+    Write-Host "                        The server's network addressing in the /etc/hosts file."
+    Write-Host "-nocertificate   : All platforms. Uninstall the client except the certificate in the keystore."
+    Write-Host "-nochrome        : All platforms. Uninstall the client except the embedded Google Chrome."
+    Write-Host "-nosox           : macOS and Linux only. Uninstall the client except Sox."
+    Write-Host "-noffmpeg        : macOS and Linux only. Uninstall the client except ffmpeg."
+    Write-Host "-nohostName      : macOS only. Uninstall the client except the server addressing in the /etc/hosts file."
+    Write-Host " "
+    Write-Host "More information about the parameters can be found in the installation documentation." -ForegroundColor Yellow
+    exit 
+}
+
+
+$platform = [System.Environment]::OSVersion.Platform.ToString()
+if ($platform -like "Win32*") {
+    $platform = "win32"
+} elseif ($platform -eq "Unix") {
+    $platform = "linux"
+} elseif ($platform -eq "MacOSX") {
+    $platform = "darwin"
+} else {
+    Write-Host "Unsupported platform detected." -ForegroundColor Red
+    exit 1
+}
+
+function CheckDependencies {
+    Write-Host "Checking dependencies..." -ForegroundColor Yellow
+    # Check if npm is installed
+    if (-not (Get-Command "npm" -ErrorAction SilentlyContinue)) {
+        Write-Host "npm is not installed. Please install Node.js and npm to continue." -ForegroundColor Green
+        Exit 1
+    }
+
+    # Check if PowerShell version is sufficient
+    if ($PSVersionTable.PSVersion -lt [Version]"7.0") {
+        Write-Host "PowerShell version 7.0 or higher is required." -ForegroundColor Red
+        Exit 1
+    }
+}
+
+# Teste si le script est exécuté en tant qu'administrateur
+If (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Write-Host "This script must be executed in administrator mode." -ForegroundColor Red
+    Write-Host "Do a right click on the PowerShell shorcut and select 'Run as Administrator'." -ForegroundColor Red
+    Exit 1
+}
+
+CheckDependencies
 
 function remove-hostName {
 
@@ -96,7 +177,6 @@ function remove-hostName {
         }   
     } 
 }
-
 
 
 function add-hostName {
@@ -568,13 +648,33 @@ function Install-CA {
 
 function Install-puppeteer {
 
-    $folder = if ($platform -eq "win32" -or ($platform -eq "linux" -and $installer -eq $False)) {
+    $Chromefolder = if ($platform -eq "win32") {
+        "$env:USERPROFILE/.cache/puppeteer"
+    } elseif ($platform -eq "linux") {
+        "~/.cache/puppeteer"
+    } elseif ($platform -eq "darwin") {
+        "$HOME/.cache/puppeteer"
+    }
+
+    if ((Test-Path "$Chromefolder") -eq $True) {
+        Remove-Item "$Chromefolder" -Recurse -Force
+        if ((Test-Path "$Chromefolder") -eq $True) {Remove-Item "$Chromefolder" -Recurse -Force}
+        if ((Test-Path "$Chromefolder") -eq $True) {
+            Write-host " "
+            Write-Host "WARNING:" -ForegroundColor Yellow
+            Write-Host "Unable to completely remove the old embedded Google Chrome for the A.V.A.T.A.R client." -ForegroundColor Yellow
+            Write-Host "Please, open a Explorer and remove the $Chromefolder directory manually." -ForegroundColor Yellow
+            Write-host " "
+        } 
+    }
+
+    $folder = if ($platform -eq "win32" -or ($platform -eq "linux" -and $application -eq $False)) {
         "$directory/resources/app"
-    } elseif ($platform -eq "linux" -and $installer -eq $True) {
+    } elseif ($platform -eq "linux" -and $application -eq $True) {
         "/usr/lib/a.v.a.t.a.r-client/resources/app"
-    } elseif ($platform -eq "darwin" -and $installer -eq $False) {
+    } elseif ($platform -eq "darwin" -and $application -eq $False) {
         "$directory/Contents/Resources/app"
-    } elseif ($platform -eq "darwin" -and $installer -eq $True) {
+    } elseif ($platform -eq "darwin" -and $application -eq $True) {
         "/Applications/A.V.A.T.A.R-Client.app/Contents/Resources/app"
     }
 
@@ -634,13 +734,13 @@ function Install-Hote {
             Write-Host ""
         }
 
-        $folder = if ($platform -eq "win32" -or ($platform -eq "linux" -and $installer -eq $False)) {
+        $folder = if ($platform -eq "win32" -or ($platform -eq "linux" -and $application -eq $False)) {
             "$directory/resources/app/core"
-        } elseif ($platform -eq "linux" -and $installer -eq $True) {
+        } elseif ($platform -eq "linux" -and $application -eq $True) {
             "/usr/lib/a.v.a.t.a.r-client/resources/app/core"
-        } elseif ($platform -eq "darwin" -and $installer -eq $False) {
+        } elseif ($platform -eq "darwin" -and $application -eq $False) {
             "$directory/Contents/Resources/app/core"
-        } elseif ($platform -eq "darwin" -and $installer -eq $True) {
+        } elseif ($platform -eq "darwin" -and $application -eq $True) {
             "/Applications/A.V.A.T.A.R-Client.app/Contents/Resources/app/core"
         }
 
@@ -722,11 +822,11 @@ function Uninstall-app {
     Write-Host ""
     $current_location = Get-Location
     
-    $folder = if ($platform -eq "win32" -or ($platform -eq "linux" -and $installer -eq $False) -or ($platform -eq "darwin" -and $installer -eq $False)) {
+    $folder = if ($platform -eq "win32" -or ($platform -eq "linux" -and $application -eq $False) -or ($platform -eq "darwin" -and $application -eq $False)) {
         "$directory"
-    } elseif ($platform -eq "linux" -and $installer -eq $True) {
+    } elseif ($platform -eq "linux" -and $application -eq $True) {
         "/usr/lib/a.v.a.t.a.r-client"
-    } elseif ($platform -eq "darwin" -and $installer -eq $True) {
+    } elseif ($platform -eq "darwin" -and $application -eq $True) {
         "/Applications/A.V.A.T.A.R-Client.app"
     }
 
@@ -739,7 +839,7 @@ function Uninstall-app {
     } 
 
     if ($platform -eq "win32" ) {
-        Write-Host "> Removing A.V.A.T.A.R client, please wait..." -ForegroundColor DarkMagenta
+        
         if ((Test-Path "$folder") -eq $True) {
 
             $checkVersionFile = if ($platform -eq "win32") {
@@ -747,7 +847,15 @@ function Uninstall-app {
             } 
 
             $json_avatar = Get-Content $checkVersionFile -Encoding utf8 | ConvertFrom-Json
-            $version = $json_avatar.version
+            $version = $json_avatar.Version
+            $DesktopPath = [Environment]::GetFolderPath('Desktop')
+            $ShortcutPath = Join-Path -Path $DesktopPath -ChildPath "A.V.A.T.A.R Client $version.lnk"
+
+            if ($version -and ((Test-Path "$ShortcutPath") -eq $True)) {
+                Write-Host "> Removing A.V.A.T.A.R client desktop shortcut" -ForegroundColor DarkMagenta
+                Remove-Item "$ShortcutPath" -Force
+                Write-Host "A.V.A.T.A.R client desktop shortcut removed" -ForegroundColor Green
+            }
 
             Remove-Item "$folder" -Recurse -Force
             if ((Test-Path "$folder") -eq $True) {Remove-Item "$folder" -Recurse -Force}
@@ -760,12 +868,6 @@ function Uninstall-app {
             } else {
                 Write-Host "A.V.A.T.A.R client removed" -ForegroundColor Green
             }
-
-            if ($version -and ((Test-Path "$env:USERPROFILE\Desktop\A.V.A.T.A.R Client $version.lnk") -eq $True)) {
-                Write-Host "> Removing A.V.A.T.A.R client desktop shortcut" -ForegroundColor DarkMagenta
-                Remove-Item "$env:USERPROFILE\Desktop\A.V.A.T.A.R Client $version.lnk" -Force
-                Write-Host "A.V.A.T.A.R client desktop shortcut removed" -ForegroundColor Green
-            }
         } else {
             Write-Host "A.V.A.T.A.R client directory not exists. Ignored." -ForegroundColor Yellow
         }
@@ -773,21 +875,21 @@ function Uninstall-app {
         if ($onlyapp -eq $False) {
 
             if ($nochrome -eq $False) {
-                Write-Host "> Removing embedded Chrome for A.V.A.T.A.R client, please wait..." -ForegroundColor DarkMagenta
+                Write-Host "> Removing embedded Google Chrome for A.V.A.T.A.R client, please wait..." -ForegroundColor DarkMagenta
                 if ((Test-Path "$Chromefolder") -eq $True) {
                     Remove-Item "$Chromefolder" -Recurse -Force
                     if ((Test-Path "$Chromefolder") -eq $True) {Remove-Item "$Chromefolder" -Recurse -Force}
                     if ((Test-Path "$Chromefolder") -eq $True) {
                         Write-host " "
                         Write-Host "WARNING:" -ForegroundColor Yellow
-                        Write-Host "Unable to completely remove the embedded Chrome for A.V.A.T.A.R client directory." -ForegroundColor Yellow
+                        Write-Host "Unable to completely remove the embedded Google Chrome for A.V.A.T.A.R client." -ForegroundColor Yellow
                         Write-Host "Please, open a Explorer and remove the $Chromefolder directory manually." -ForegroundColor Yellow
                         Write-host " "
                     } else {
-                        Write-Host "Embedded Chrome for A.V.A.T.A.R client removed" -ForegroundColor Green
+                        Write-Host "Embedded Google Chrome for A.V.A.T.A.R client removed" -ForegroundColor Green
                     }
                 } else {
-                    Write-Host "Embedded Chrome for A.V.A.T.A.R client not exists. Ignored." -ForegroundColor Yellow
+                    Write-Host "Embedded Google Chrome for A.V.A.T.A.R client not exists. Ignored." -ForegroundColor Yellow
                 }
             }
 
@@ -818,7 +920,7 @@ function Uninstall-app {
 
     } elseif ($platform -eq "linux") {
 
-        if ($installer -eq $False) {
+        if ($application -eq $False) {
             $desktopFile = "$env:HOME/.local/share/applications/a.v.a.t.a.r-client.desktop"
             if ((Test-Path "$desktopFile") -eq $True) {
                 Write-Host "> Removing A.V.A.T.A.R client desktop shortcut" -ForegroundColor DarkMagenta
@@ -829,7 +931,7 @@ function Uninstall-app {
 
         Write-Host "> Removing A.V.A.T.A.R client, please wait..." -ForegroundColor DarkMagenta
         if ((Test-Path "$folder") -eq $True) {
-            if ($installer -eq $True) { 
+            if ($application -eq $True) { 
                 start-process -FilePath "sudo" -ArgumentList "apt remove a.v.a.t.a.r-client" -NoNewWindow -workingdirectory "." -Wait
             }
             if ((Test-Path "$folder") -eq $True) {
@@ -1041,6 +1143,41 @@ function Uninstall-app {
 
 }
 
+
+function Update-Chrome {
+
+    Write-Host "> Updating embedded Google Chrome: " -NoNewline 
+    Write-Host "Yes" -ForegroundColor Magenta
+    Write-Host ""
+    $confirm = Read-Host -Prompt "Would you like to update the embedded Google Chrome only (Y/N)[Y]?"
+    if ([string]::IsNullOrWhiteSpace($confirm)) {
+        $confirm ="Y"
+    }
+    if ($confirm.ToLower() -eq 'n') {
+        Write-Host ""
+        Write-Host "Bye bye, have a good day!" -ForegroundColor DarkMagenta 
+        Write-Host ""
+        Stop-Transcript
+        exit
+    }
+    $current_location = Get-Location
+    Install-puppeteer
+
+    Set-Location -Path $current_location
+    # Reset directory location
+    Write-Host ""
+    Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
+    Write-Host "█                                                                              █" -ForegroundColor DarkMagenta
+    Write-Host "█           Embedded Google Chrome have been successfully updated!             █" -ForegroundColor DarkMagenta
+    Write-Host "█                                  Have fun !                                  █" -ForegroundColor DarkMagenta
+    Write-Host "█                                                                              █" -ForegroundColor DarkMagenta
+    Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
+    Stop-Transcript
+    exit
+
+}
+
+
 function Install-CertificatesOnly {
 
     Write-Host "> Certificate creation: " -NoNewline 
@@ -1078,6 +1215,12 @@ function Install-CertificatesOnly {
     exit
 }
 
+Clear-Host
+
+if ($help) {
+    Show-Help
+}
+
 $ErrorActionPreference = "Ignore"
 
 if (Test-Path ./client-installer.log -PathType Leaf) {
@@ -1086,7 +1229,6 @@ if (Test-Path ./client-installer.log -PathType Leaf) {
 $ErrorActionPreference = "Stop"
 
 Start-Transcript -path ./client-installer.log -append
-Clear-Host
 
 if ($uninstall -eq $False) {
     Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
@@ -1118,9 +1260,9 @@ if ($null -eq $platform) {
 }
 
 # Test installation type
-if ($null -eq $directory -and $installer -eq $False) {
+if ($null -eq $directory -and $application -eq $False) {
     Write-Host ""
-    Write-Host "ERROR: At least -directory or -installer parameter is required (see the documentation)" -ForegroundColor DarkRed
+    Write-Host "ERROR: At least -directory or -application parameter is required (see the documentation)" -ForegroundColor DarkRed
     Write-Host ""
     Stop-Transcript
     exit
@@ -1136,9 +1278,9 @@ if ($null -eq $directory -and $platform -eq "win32") {
 }
 
 # Test installation type
-if ($null -ne $directory -and $installer -eq $True) {
+if ($null -ne $directory -and $application -eq $True) {
     Write-Host ""
-    Write-Host "ERROR: Choose between -directory or -installer but not both at the same time (see the documentation)." -ForegroundColor DarkRed
+    Write-Host "ERROR: Choose between -directory or -application but not both at the same time (see the documentation)." -ForegroundColor DarkRed
     Write-Host ""
     Stop-Transcript
     exit
@@ -1157,7 +1299,7 @@ Write-Host ""
 Write-Host "> Installation platform: " -NoNewline 
 Write-Host "$platform" -ForegroundColor Magenta
 Write-Host "> Installation directory: " -NoNewline 
-if ($installer -eq $True) {
+if ($application -eq $True) {
     if ($platform -eq "linux") {
         Write-Host "Application by the debian installer"
     } elseif ($platform -eq "darwin") {
@@ -1175,9 +1317,9 @@ if ($installer -eq $True) {
 }
 
 if ($uninstall -eq $True) {
-    if ($null -eq $directory -and $installer -eq $False) {
+    if ($null -eq $directory -and $application -eq $False) {
         Write-Host ""
-        Write-Host "ERROR: uninstalling the application required a -directory or -installer parameter (see the documentation)." -ForegroundColor DarkRed
+        Write-Host "ERROR: uninstalling the application required a -directory or -application parameter (see the documentation)." -ForegroundColor DarkRed
         Write-Host ""
         Stop-Transcript
         exit
@@ -1186,10 +1328,22 @@ if ($uninstall -eq $True) {
     Uninstall-app 
 }
 
-if ($onlycertificate -eq $True) {
-    if ($null -eq $directory -and $installer -eq $False) {
+if ($updateChrome -eq $True) {
+    if ($null -eq $directory -and $application -eq $False) {
         Write-Host ""
-        Write-Host "ERROR: For a certificates creation, the -directory or -installer parameter is required (see the documentation)." -ForegroundColor DarkRed
+        Write-Host "ERROR: For the update of embedded Google Chrome, the -directory or -application parameter is required (see the documentation)." -ForegroundColor DarkRed
+        Write-Host ""
+        Stop-Transcript
+        exit
+    }
+
+    Update-Chrome
+}
+
+if ($onlycertificate -eq $True) {
+    if ($null -eq $directory -and $application -eq $False) {
+        Write-Host ""
+        Write-Host "ERROR: For a certificates creation, the -directory or -application parameter is required (see the documentation)." -ForegroundColor DarkRed
         Write-Host ""
         Stop-Transcript
         exit
@@ -1199,10 +1353,10 @@ if ($onlycertificate -eq $True) {
 }
 
 Write-Host "> Installation as application (launcher): " -NoNewline  
-if ($platform -eq "win32" -and $installer -eq $True) {
+if ($platform -eq "win32" -and $application -eq $True) {
     Write-Host "Installer is not supported on Windows" -ForegroundColor Magenta
 } else {
-    if ($installer -eq $True) {
+    if ($application -eq $True) {
         Write-Host "Yes" -ForegroundColor Magenta
     } else {
         Write-Host "No" -ForegroundColor Magenta
@@ -1223,9 +1377,9 @@ if ($shortcut -eq $True) {
 
 Write-Host ""
 # Test installer parameter (only for macOS)
-if ($platform -eq "darwin" -and $installer -eq $False) {
+if ($platform -eq "darwin" -and $application -eq $False) {
     Write-Host "> Warning:" -ForegroundColor Yellow
-    Write-Host "    The -installer parameter is prefered and required to automatically update" -ForegroundColor Yellow
+    Write-Host "    The -application parameter is prefered and required to automatically update" -ForegroundColor Yellow
     Write-Host "    the application. If you continue, no update version will be possible." -ForegroundColor Yellow
     Write-Host "    More information in the documentation." -ForegroundColor Yellow
     Write-Host ""
@@ -1247,14 +1401,14 @@ If (((Test-Path "$directory") -eq $True)) {
         }
     } 
     Write-Host ""
-} Elseif ($platform -eq "linux" -and $installer -eq $False -and (Test-Path "$directory") -eq $False -and ((Test-Path "$env:HOME/.local/share/applications/a.v.a.t.a.r-client.desktop")-eq $True)) {
+} Elseif ($platform -eq "linux" -and $application -eq $False -and (Test-Path "$directory") -eq $False -and ((Test-Path "$env:HOME/.local/share/applications/a.v.a.t.a.r-client.desktop")-eq $True)) {
     Write-Host "> Warning:" -ForegroundColor Yellow
     Write-Host "    An application shortcut already exists in the application launcher." -ForegroundColor Yellow  
     Write-Host "    The installer can't create several shortcuts for the same application." -ForegroundColor Yellow 
     Write-Host "    If you want a shortcut for this new application, you have to create a shortcut manually after the installation." -ForegroundColor Yellow 
     Write-Host "    More information in the documentation." -ForegroundColor Yellow   
     $shortcut = $False
-} Elseif ($platform -eq "linux" -and $installer -eq $True -and ((Test-Path "$env:HOME/.local/share/applications/a.v.a.t.a.r-client.desktop")-eq $True)) {
+} Elseif ($platform -eq "linux" -and $application -eq $True -and ((Test-Path "$env:HOME/.local/share/applications/a.v.a.t.a.r-client.desktop")-eq $True)) {
     Write-Host "ERROR:" -ForegroundColor DarkRed
     Write-Host "    An application shortcut already exists in the application launcher." -ForegroundColor DarkRed  
     Write-Host "    The installer can't create several shortcuts for the same application." -ForegroundColor DarkRed 
@@ -1265,7 +1419,7 @@ If (((Test-Path "$directory") -eq $True)) {
     Write-Host ""
     Stop-Transcript
     exit
-} Elseif (($platform -eq "linux" -and $installer -eq $True -and ((Test-Path "/usr/lib/a.v.a.t.a.r-client") -eq $True)) -or ($platform -eq "darwin" -and $installer -eq $True -and ((Test-Path "/Applications/A.V.A.T.A.R-Client.app") -eq $True))) {
+} Elseif (($platform -eq "linux" -and $application -eq $True -and ((Test-Path "/usr/lib/a.v.a.t.a.r-client") -eq $True)) -or ($platform -eq "darwin" -and $application -eq $True -and ((Test-Path "/Applications/A.V.A.T.A.R-Client.app") -eq $True))) {
     Write-Host "> Warning:" -ForegroundColor Yellow
     Write-Host "    An A.V.A.T.A.R client application exists and will be removed during the installation." -ForegroundColor Yellow 
     Write-Host "    if you want to backup it, stop the installation now!" -ForegroundColor Yellow
@@ -1284,6 +1438,7 @@ if ($confirm.ToLower() -eq 'n') {
     exit
 }
 
+$noopenssl = $False
 # Set location
 $current_location = Get-Location
 $package = "$current_location/dist"
@@ -1349,38 +1504,45 @@ $ChromePath = if ($platform -eq "win32") {
     "$HOME/.cache/puppeteer"
 }
 
-if (Test-Path $ChromePath) {
-    Write-Host "> Removing embedded Chrome for A.V.A.T.A.R client, please wait..." -ForegroundColor DarkMagenta
+if ((Test-Path $ChromePath) -eq $True) {
+    Write-Host "> Removing old embedded Google Chrome for A.V.A.T.A.R client, please wait..." -ForegroundColor DarkMagenta
     Remove-Item "$ChromePath" -Recurse -Force
-
-    if ((Test-Path "$ChromePath") -eq $True) {
-        start-process -FilePath "sudo" -ArgumentList "rm -r $ChromePath" -NoNewWindow -workingdirectory "." -Wait
+    if ((Test-Path $ChromePath) -eq $True) {
+        if ($platform -eq "linux" -or $platform -eq "darwin") {
+            start-process -FilePath "sudo" -ArgumentList "rm -r $ChromePath" -NoNewWindow -workingdirectory "." -Wait
+        } else {
+            Remove-Item "$ChromePath" -Recurse -Force
+        }
     }
-    
-    Write-Host "Embedded Chrome for A.V.A.T.A.R client removed" -ForegroundColor Green
+    Write-Host "Old embedded Google Chrome for A.V.A.T.A.R client removed" -ForegroundColor Green
 }
 
 if ($platform -eq "win32" -or $platform -eq "linux") {
 
-    if ($installer -eq $False) {
+    if ($application -eq $False) {
 
         if (-Not (Test-Path $directory)) {
             New-Item -Path "$directory" -ItemType "directory"
         } else {
             # Removing old application directory
-            Write-Host "> Removing old A.V.A.T.A.R client application, please wait..." -NoNewline -ForegroundColor DarkMagenta
-            Remove-Item "$directory/*" -Recurse -Force
+            Write-Host "> Removing old A.V.A.T.A.R client application, please wait..." -ForegroundColor DarkMagenta
+            Remove-Item "$directory" -Recurse -Force
             if ((Test-Path $directory) -eq $True) {
-                start-process -FilePath "sudo" -ArgumentList "rm -r $directory" -NoNewWindow -workingdirectory "." -Wait
+                if ($platform -eq "linux") {
+                    start-process -FilePath "sudo" -ArgumentList "rm -r $directory" -NoNewWindow -workingdirectory "." -Wait
+                } else {
+                    Remove-Item "$directory" -Recurse -Force
+                }
             }
-            Write-Host " done" -ForegroundColor Green
+            New-Item -Path "$directory" -ItemType "directory"
+            Write-Host "Old A.V.A.T.A.R client application removed" -ForegroundColor Green
             Start-Sleep -Seconds 1
         }
 
         # Copy new version to the A.V.A.T.A.R client directory
         Set-NewApplication -folder "$package/*" -destination "$directory"
 
-    } elseif ($platform -eq "linux" -and $installer -eq $True) {
+    } elseif ($platform -eq "linux" -and $application -eq $True) {
 
         if ((Test-Path "/usr/lib/a.v.a.t.a.r-client") -eq $True) {
             # Removing old application directory
@@ -1462,7 +1624,7 @@ if ($platform -eq "win32" -or $platform -eq "linux") {
         }
     } 
     
-    if ($platform -eq "win32" -or ($platform -eq "linux" -and $installer -eq $False )) {
+    if ($platform -eq "win32" -or ($platform -eq "linux" -and $application -eq $False )) {
         
         # Set folder for the Electron package
         Set-Location -Path "$directory/resources/app"
@@ -1471,47 +1633,11 @@ if ($platform -eq "win32" -or $platform -eq "linux") {
         Uninstall-ElectronPackager
         # Installing Electron package
         Install-Electron -workingdirectory "."
-        
-        # Create shortcut
-        if ($platform -eq "win32" -and $shortcut -eq $True) {
-            if ((Test-Path "$env:USERPROFILE\Desktop\A.V.A.T.A.R Client $version.lnk") -eq $True) {
-                Remove-Item "$env:USERPROFILE\Desktop\A.V.A.T.A.R Client $version.lnk" -Force
-            } 
-
-            try {
-                Write-Host "> Creating A.V.A.T.A.R client $version shortcut on Desktop" -NoNewline  -ForegroundColor DarkMagenta
-                $Shell = New-Object -ComObject Wscript.Shell
-                $DesktopShortcut = $Shell.CreateShortcut("$env:USERPROFILE\Desktop\A.V.A.T.A.R Client $version.lnk")
-                $DesktopShortcut.TargetPath = "$directory\A.V.A.T.A.R-Client.exe"
-                $DesktopShortcut.IconLocation = "$directory\A.V.A.T.A.R-Client.exe, 0"
-                $DesktopShortcut.WorkingDirectory = "$directory"
-                $DesktopShortcut.Save()
-                Write-Host " done" -ForegroundColor Green
-                Start-Sleep -Seconds 1
-            } catch {
-                Write-Host "Error of creation of the A.V.A.T.A.R client $version shortcut on Desktop: " -ForegroundColor DarkRed -NoNewline
-                Write-Error $_.Exception.InnerException.Message -ErrorAction Continue 
-            }
-        } elseif ($platform -eq "linux" -and $shortcut -eq $True) {
-            Write-Host "> Creating A.V.A.T.A.R client $version shortcut in the application launcher" -NoNewline  -ForegroundColor DarkMagenta
-            $desktopFile = "$env:HOME/.local/share/applications/a.v.a.t.a.r-client.desktop"
-            "[Desktop Entry]" | Out-File -FilePath $desktopFile
-            "Name=A.V.A.T.A.R Client $version" | Out-File -FilePath $desktopFile -Append
-            "Comment=A.V.A.T.A.R Client $version" | Out-File -FilePath $desktopFile -Append
-            "GenericName=A.V.A.T.A.R Client $version" | Out-File -FilePath $desktopFile -Append
-            "Exec=$directory/A.V.A.T.A.R-Client %U" | Out-File -FilePath $desktopFile -Append
-            "Icon=$directory/resources/app/avatar.ico" | Out-File -FilePath $desktopFile -Append
-            "Type=Application" | Out-File -FilePath $desktopFile -Append
-            "StartupNotify=true" | Out-File -FilePath $desktopFile -Append
-            "Categories=GNOME;GTK;Utility;" | Out-File -FilePath $desktopFile -Append
-            Write-Host " done" -ForegroundColor Green
-            Start-Sleep -Seconds 1
-        }
     }
 } else {
 
-    $folderPath = if ($installer -eq $True) {"/Applications/A.V.A.T.A.R-Client.app"} else {$directory}
-    $installPath = if ($installer -eq $True) {"/Applications"} else {$directory}
+    $folderPath = if ($application -eq $True) {"/Applications/A.V.A.T.A.R-Client.app"} else {$directory}
+    $installPath = if ($application -eq $True) {"/Applications"} else {$directory}
    
     if ((Test-Path "$folderPath") -eq $True) {
         # Removing old application
@@ -1553,6 +1679,55 @@ if ($nocertificate -eq $false) {
     }
     Install-Hote
 }
+
+function Install-Shortcut  {
+
+    # Create shortcut
+    if ($platform -eq "win32" -and $shortcut -eq $True) {
+
+        $DesktopPath = [Environment]::GetFolderPath('Desktop')
+        $ShortcutPath = Join-Path -Path $DesktopPath -ChildPath "A.V.A.T.A.R Client $version.lnk"
+
+        if ((Test-Path "$ShortcutPath") -eq $True) {
+            Remove-Item "$ShortcutPath" -Force
+        } 
+
+        try {
+            Write-Host "> Creating A.V.A.T.A.R client $version shortcut on Desktop" -NoNewline  -ForegroundColor DarkMagenta
+            $Shell = New-Object -ComObject Wscript.Shell
+            $DesktopShortcut = $Shell.CreateShortcut($ShortcutPath)
+            $DesktopShortcut.TargetPath = "$directory\A.V.A.T.A.R-Client.exe"
+            $DesktopShortcut.IconLocation = "$directory\A.V.A.T.A.R-Client.exe, 0"
+            $DesktopShortcut.WorkingDirectory = "$directory"
+            $DesktopShortcut.Description = "A.V.A.T.A.R Client version $version"
+            $DesktopShortcut.Save()
+            Write-Host " done" -ForegroundColor Green
+            Start-Sleep -Seconds 1
+        } catch {
+            Write-Host " "
+            Write-Host "Error of creation of the A.V.A.T.A.R client $version shortcut on Desktop: " -ForegroundColor DarkRed -NoNewline
+        }
+    } elseif ($platform -eq "linux" -and $shortcut -eq $True) {
+        Write-Host "> Creating A.V.A.T.A.R client $version shortcut in the application launcher" -NoNewline  -ForegroundColor DarkMagenta
+        $desktopFile = "$env:HOME/.local/share/applications/a.v.a.t.a.r-client.desktop"
+        "[Desktop Entry]" | Out-File -FilePath $desktopFile
+        "Name=A.V.A.T.A.R Client $version" | Out-File -FilePath $desktopFile -Append
+        "Comment=A.V.A.T.A.R Client $version" | Out-File -FilePath $desktopFile -Append
+        "GenericName=A.V.A.T.A.R Client $version" | Out-File -FilePath $desktopFile -Append
+        "Exec=$directory/A.V.A.T.A.R-Client %U" | Out-File -FilePath $desktopFile -Append
+        "Icon=$directory/resources/app/avatar.ico" | Out-File -FilePath $desktopFile -Append
+        "Type=Application" | Out-File -FilePath $desktopFile -Append
+        "StartupNotify=true" | Out-File -FilePath $desktopFile -Append
+        "Categories=GNOME;GTK;Utility;" | Out-File -FilePath $desktopFile -Append
+        Write-Host " done" -ForegroundColor Green
+        Start-Sleep -Seconds 1
+    }
+
+}
+
+$ErrorActionPreference = "Ignore"
+# Last thing, create shortcut
+Install-Shortcut 
 
 # Reset directory location
 Set-Location -Path $current_location
