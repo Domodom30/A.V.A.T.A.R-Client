@@ -59,6 +59,7 @@ if ($del -eq $True) {
     $ErrorActionPreference = 'SilentlyContinue'
     Write-Host "⏳​ Removing node_modules directory" -ForegroundColor DarkMagenta
     Remove-Item "../node_modules" -Recurse -Force
+    Remove-Item "../package-lock.json" -Force
     If ((Test-Path "../node_modules") -eq $True) {
         start-process -FilePath "sudo" -ArgumentList "rm -r ../node_modules" -NoNewWindow -workingdirectory "." -Wait
     } 
