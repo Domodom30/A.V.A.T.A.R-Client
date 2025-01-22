@@ -1,5 +1,5 @@
 Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
-Write-Host "█               A.V.A.T.A.R CLIENT VERSION UPDATE 2/2               █" -ForegroundColor DarkMagenta
+Write-Host "█        A.V.A.T.A.R. Version Update Installer - STEP 2/2           █" -ForegroundColor DarkMagenta
 Write-Host "█                           Linux installer                         █" -ForegroundColor DarkMagenta
 Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
 #■ A.V.A.T.A.R 29/10/2024

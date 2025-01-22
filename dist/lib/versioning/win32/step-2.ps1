@@ -1,5 +1,5 @@
 Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
-Write-Host "█        A.V.A.T.A.R CLIENT VERSION UPDATE - STEP 2/2               █" -ForegroundColor DarkMagenta
+Write-Host "█        A.V.A.T.A.R. Version Update Installer - STEP 2/2           █" -ForegroundColor DarkMagenta
 Write-Host "█                        Windows installer                          █" -ForegroundColor DarkMagenta
 Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
 #■ A.V.A.T.A.R 29/10/2024
@@ -102,7 +102,7 @@ Start-Sleep -Seconds 1
 
 If (($installType -eq "exe") -or ($installType -eq "module")) {
     Write-Host "> Installing Electron package in A.V.A.T.A.R application, please wait..." -ForegroundColor DarkMagenta
-    start-process -FilePath "npm" -ArgumentList "install", "--save-dev electron@$electron_version" -NoNewWindow -workingdirectory ".." -Wait
+    start-process -FilePath "npm.cmd" -ArgumentList "install", "--save-dev electron@$electron_version" -NoNewWindow -workingdirectory ".." -Wait
     Write-Host "Electron package installation done" -ForegroundColor Green
     Start-Sleep -Seconds 1
 }

@@ -1,5 +1,5 @@
 Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
-Write-Host "█        A.V.A.T.A.R CLIENT VERSION UPDATE - STEP 1/2               █" -ForegroundColor DarkMagenta
+Write-Host "█        A.V.A.T.A.R. Version Update Installer - STEP 1/2           █" -ForegroundColor DarkMagenta
 Write-Host "█                        Windows installer                          █" -ForegroundColor DarkMagenta
 Write-Host "■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" -ForegroundColor DarkMagenta
 #■ A.V.A.T.A.R 29/10/2024
@@ -7,7 +7,7 @@ Write-Host "■■■■■■■■■■■■■■■■■■■■■■�
 function CheckDependencies {
     Write-Host "Checking dependencies..." -ForegroundColor Yellow
     # Check if npm is installed
-    if (-not (Get-Command "npm" -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command "npm.cmd" -ErrorAction SilentlyContinue)) {
         Write-Host "npm is not installed. Please install Node.js and npm to continue." -ForegroundColor Green
         Stop-Transcript
         Exit 1
@@ -109,11 +109,11 @@ If (($installType -eq "exe") -or ($installType -eq "module")) {
 
     If ($installType -eq "exe") {
         Write-Host "> Installing Electron packager, please wait..." -ForegroundColor DarkMagenta
-        start-process -FilePath "npm" -ArgumentList "install", "--save-dev @electron/packager" -NoNewWindow -workingdirectory . -Wait 
+        start-process -FilePath "npm.cmd" -ArgumentList "install", "--save-dev @electron/packager" -NoNewWindow -workingdirectory . -Wait 
         Write-Host "Electron packager installed" -ForegroundColor Green
         Start-Sleep -Seconds 1
         Write-Host "> Creating a new A.V.A.T.A.R client application, please wait..." -ForegroundColor DarkMagenta
-        start-process -FilePath "npx" -ArgumentList "electron-packager", ".", "--electron-version=$electron_version", "--icon=./avatar.ico", "--out=./output" -NoNewWindow -workingdirectory . -Wait
+        start-process -FilePath "npx.cmd" -ArgumentList "electron-packager", ".", "--electron-version=$electron_version", "--icon=./avatar.ico", "--out=./output" -NoNewWindow -workingdirectory . -Wait
         Write-Host "A.V.A.T.A.R application created" -ForegroundColor Green
 
          # get platform
@@ -131,7 +131,7 @@ If (($installType -eq "exe") -or ($installType -eq "module")) {
         Start-Sleep -Seconds 1 
     } else {
         Write-Host "> Installing node_modules packages, please wait..." -ForegroundColor DarkMagenta
-        start-process -FilePath "npm" -ArgumentList "install" -NoNewWindow -workingdirectory . -Wait
+        start-process -FilePath "npm.cmd" -ArgumentList "install" -NoNewWindow -workingdirectory . -Wait
         Write-Host "Node_modules packages installed" -ForegroundColor Green
         Start-Sleep -Seconds 1
     }
