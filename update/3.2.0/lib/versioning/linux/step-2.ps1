@@ -70,11 +70,11 @@ if ($del -eq $True) {
     }
 
     Write-Host "⏳​ Removing old Chrome version" -ForegroundColor DarkMagenta
-    Remove-Item "$env:HOME/.cache/puppeteer" -Recurse -Force
-    If ((Test-Path "$env:HOME/.cache/puppeteer") -eq $True) {
-        start-process -FilePath "sudo" -ArgumentList "rm -r $env:HOME/.cache/puppeteer" -NoNewWindow -workingdirectory "." -Wait
+    Remove-Item "~/.cache/puppeteer" -Recurse -Force
+    If ((Test-Path "~/.cache/puppeteer") -eq $True) {
+        start-process -FilePath "sudo" -ArgumentList "rm -r ~/.cache/puppeteer" -NoNewWindow -workingdirectory "." -Wait
     } 
-    If ((Test-Path "$env:HOME/.cache/puppeteer") -eq $True) {
+    If ((Test-Path "~/.cache/puppeteer") -eq $True) {
         Write-Host "> Unable to remove the old version of Chrome." -ForegroundColor DarkRed
         Write-Host "> You can remove the old Chrome version manually in app/core/chrome/.cache/puppeteer/chrome and chrome-headless-shell folders" -ForegroundColor DarkRed
     } else {

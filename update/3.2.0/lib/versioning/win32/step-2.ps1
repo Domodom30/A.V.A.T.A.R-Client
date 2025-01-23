@@ -72,13 +72,13 @@ if ($del -eq $True) {
     }
 
     Write-Host "> Removing old Chrome version" -ForegroundColor DarkMagenta
-    Remove-Item ../core/chrome/.cache -Recurse -Force
-    If ((Test-Path "../core/chrome/.cache") -eq $True) {
+    Remove-Item "$env:USERPROFILE/.cache/puppeteer" -Recurse -Force
+    If ((Test-Path "$env:USERPROFILE/.cache/puppeteer") -eq $True) {
         Write-Host "> Unable to remove old Chrome version, wait 3 seconds and retry..." -ForegroundColor DarkRed
         Start-Sleep -Seconds 3
-        Remove-Item ../core/chrome/.cache -Recurse -Force
+        Remove-Item "$env:USERPROFILE/.cache/puppeteer" -Recurse -Force
     } 
-    If ((Test-Path "../core/chrome/.cache") -eq $True) {
+    If ((Test-Path "$env:USERPROFILE/.cache/puppeteer") -eq $True) {
         Write-Host "> Unable to remove the old version of Chrome." -ForegroundColor DarkRed
         Write-Host "> You can remove the old Chrome version manually in app/core/chrome/.cache/puppeteer/chrome and chrome-headless-shell folders" -ForegroundColor DarkRed
     } else {
