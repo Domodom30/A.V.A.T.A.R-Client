@@ -12,6 +12,7 @@ import * as githubLib from './githubRepos.js';
 
 await import ('file:///'+path.resolve(__dirname, 'message.js'));
 import * as avatar from './core/avatar.js';
+import * as reportLibrary from './reportLibrary.js';
 
 import { default as SimpleTTS } from './lib/simpletts/lib/cjs/main.cjs';
 const vbsFolders = path.resolve(__dirname, "core", "lib", "tts",  process.platform, "scripts");
@@ -24,6 +25,8 @@ let pluginStudioWindow;
 let encryptWindow;
 let welcomeSettingWindow;
 let backupRestoreWindow;
+let initInformationWindow;
+let informationWindow;
 
 // Property files
 let appProperties;
@@ -44,6 +47,7 @@ global.L  = new Language();
 let timeoutStartControl;
 let fullScreen;
 let github;
+let Report;
 
 function setProperties() {
 
@@ -120,6 +124,7 @@ function createWindow () {
       if (encryptWindow)  encryptWindow.webContents.openDevTools();
       if (welcomeSettingWindow) welcomeSettingWindow.webContents.openDevTools();
       if (backupRestoreWindow) backupRestoreWindow.webContents.openDevTools();
+      if (initInformationWindow) initInformationWindow.webContents.openDevTools();
       mainWindow.webContents.openDevTools();
     });
 
@@ -134,6 +139,7 @@ function createWindow () {
           app.exit();
         };
         
+        Avatar.Interface.information = async () => initInformation();
         Avatar.Interface.showRestartBox = async (arg) => mainWindow.webContents.send('showRestartBox', arg);
         Avatar.Interface.quit = () => mainWindow.destroy();
         Avatar.Interface.openSettings = (init, voices) => openSettings(init, voices);
@@ -169,6 +175,12 @@ function createWindow () {
       mainWindow = null;
     });
 
+    ipcMain.handle('getInfoPackage', async (event, arg) => {return await Report.getInfoPackage(arg)});
+    ipcMain.handle('auditPlugin', () => Report.auditPlugin(pluginStudioWindow));
+    ipcMain.handle('pluginVulnerabilityFix', (event, arg) => Report.pluginVulnerabilityFix(arg));
+    ipcMain.handle('pluginUpdatePackage', (event, arg) => Report.pluginUpdatePackage(arg));
+    ipcMain.handle('quit-information', () => informationWindow.destroy());
+    ipcMain.handle('showAvatarGithub', () => showAvatarGithub());
     ipcMain.handle('getPluginWidgets', async () => {
       if (Avatar.pluginLibrairy)
         return await Avatar.pluginLibrairy.getPluginWidgets();
@@ -250,6 +262,95 @@ function createWindow () {
     ipcMain.handle('info', async () => {
       return appProperties.version;
     });
+}
+
+
+function showAvatarGithub() {
+  shell.openExternal(`https://github.com/${Config.repository}`);
+}
+
+async function initInformation() {
+
+  if (informationWindow) return informationWindow.show();
+  if (initInformationWindow) return initInformationWindow.show();
+
+  const style = {
+    parent: mainWindow,
+    frame: false,
+    movable: false,
+    resizable: false,
+    minimizable: false,
+    alwaysOnTop: false,
+    show: false,
+    width: 300,
+    height: 130,
+    webPreferences: {
+      preload: path.resolve(__dirname, 'initInformation-preload.js')
+    }
+  };
+
+  var audit, outdated;
+  initInformationWindow = new BrowserWindow(style);
+  initInformationWindow.loadFile('./assets/html/initInformation.html');
+  initInformationWindow.setMenu(null);
+  initInformationWindow.once('ready-to-show', async () => {
+    initInformationWindow.show();
+    initInformationWindow.webContents.send('set-init-title', L.get("infos.titleInitMsg"));
+    initInformationWindow.webContents.send('set-init-message', L.get("infos.auditMsg"));
+    audit = await Report.runAudit(__dirname, 'audit');
+    initInformationWindow.webContents.send('set-init-message', L.get("infos.outdatedMsg"));
+    outdated = await Report.runAudit(__dirname, 'outdated');
+    initInformationWindow.destroy();
+  })
+
+  initInformationWindow.on('closed', () => {
+    initInformationWindow = null;
+    information(audit, outdated);
+  })
+}
+
+async function information(audit, outdated) {
+
+  if (informationWindow) return informationWindow.show();
+
+  const infos = {
+    version: Config.version,
+    repository: Config.repository,
+    arch: process.arch,
+    nodeVer: process.versions.node,
+    chromeVer: process.versions.chrome,
+    electronVer: process.versions.electron 
+  }
+
+  const style = {
+    parent: mainWindow,
+    frame: true,
+    resizable: true,
+    show: false,
+    minWidth: 400,
+    width: 650,
+    minHeight: 550,
+    height: 550,
+    maxHeight: 550,
+    maximizable: false,
+    icon: path.resolve(__dirname, 'assets/images/Avatar.png'),
+    webPreferences: {
+      preload: path.resolve(__dirname, 'information-preload.js')
+    },
+    title: L.get("infos.wintitle")
+  };
+
+  informationWindow = new BrowserWindow(style);
+  informationWindow.loadFile(path.resolve(__dirname, 'assets/html/information.html'));
+  informationWindow.setMenu(null);
+  informationWindow.once('ready-to-show', () => {
+    informationWindow.show();
+    informationWindow.webContents.send('initApp', {audit: audit, outdated: outdated, infos: infos});
+  })
+
+  informationWindow.on('closed', () => {
+    informationWindow = null;
+  })
 }
 
 
@@ -718,6 +819,7 @@ async function appInit () {
         }
         await Avatar.pluginLibrairy.initVar(Config);
         github = await githubLib.init(Config);
+        Report = await reportLibrary.init();
         return true;
       }
     } catch (err) {
@@ -996,6 +1098,12 @@ async function showMenu(arg) {
       label: L.get("menu.documentation"),
       icon: iconPath+'/help.png',
       click: async () => documentation()
+    },
+    {type: 'separator'},
+    {
+      label: L.get("infos.menu"),
+      icon: iconPath+'/info.png',
+      click: async () => {Avatar.Interface.information()}
     },
     {type: 'separator'},
     {
