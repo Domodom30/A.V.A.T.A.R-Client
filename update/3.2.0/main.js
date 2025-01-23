@@ -232,7 +232,7 @@ function createWindow () {
     ipcMain.handle('isCloseApp', async () => { return await isCloseApp()});
     ipcMain.handle('closeApp', async (event, arg) => closeApp(arg, true));
     ipcMain.handle('reloadApp', async (event, arg) => closeApp(arg, false));
-    ipcMain.handle('setNewVersion', async (event, arg) => {return await setNewVersion(arg)});
+    ipcMain.handle('setNewVersion', async (event, arg) => {return setNewVersion(arg)});
     ipcMain.handle('showMenu' , async (event, arg) => {return showMenu(arg)});
     ipcMain.handle('testVoice' , async (event, arg) => {return testVoice(arg)});
     ipcMain.handle('dialog:openFile', handleFileOpen);
@@ -1133,11 +1133,11 @@ function documentation() {
 }
 
 
-async function setNewVersion (version) {
+function setNewVersion (version) {
     const options = {
         type: 'question',
-        title: L.get("newVersion.newVersionTitle"),
-        message: L.get(["newVersion.newVersionMsg", appProperties.version, version]),
+        title: L.get(["newVersion.newVersionTitle", version]),
+        message: L.get("newVersion.newVersionMsg"),
         detail: L.get("newVersion.newVersionDetail"),
         noLink: true,
         buttons: [L.get("newVersion.clientOnly"), L.get("newVersion.allClients"), L.get("newVersion.cancelupdate")]

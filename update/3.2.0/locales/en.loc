@@ -76,9 +76,9 @@
 	"noReady": "Wait for the client to initialize completely before displaying the menu!"
   },
   "newVersion": {
-	"newVersionTitle": "Update to version 2.0.1",
+	"newVersionTitle": "Upgrade to version $$",
 	"newVersionMsg": "What do you want to do?",
-	"newVersionDetail": "This client only: deploy the update only on this client.\nAll clients: deploy the update on all connected clients.",
+	"newVersionDetail": "Choose between deploying the update only on this client\nor on all connected clients.",
 	"clientOnly": "This client only",
 	"allClients": "All clients",
 	"cancelupdate": "Later",

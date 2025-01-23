@@ -78,7 +78,7 @@
   "newVersion": {
 	"newVersionTitle": "Mise à jour vers la version $$",
 	"newVersionMsg": "Que voulez-vous faire ?",
-	"newVersionDetail": "Ce client uniquement: déploye la mise à jour uniquement sur ce client.\nTous les clients: déploye la mise à jour sur tous les clients connectés.",
+	"newVersionDetail": "Choisissez entre déployer la mise à jour uniquement sur ce client\nou sur tous les clients connectés.",
 	"clientOnly": "Ce client uniquement",
 	"allClients": "Tous les clients",
 	"cancelupdate": "Plus tard",
