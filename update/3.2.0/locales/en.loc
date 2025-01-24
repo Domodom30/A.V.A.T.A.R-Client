@@ -73,7 +73,8 @@
 	"errorHTTPServer": "Activate the client's HTTP communication port to display the documentation",
 	"newVersion": "New version $$ available!",
 	"noScreenSaver": "Unable to start the screensaver: $$",
-	"noReady": "Wait for the client to initialize completely before displaying the menu!"
+	"noReady": "Wait for the client to initialize completely before displaying the menu!",
+	"changeLog": "Change log"
   },
   "newVersion": {
 	"newVersionTitle": "Upgrade to version $$",

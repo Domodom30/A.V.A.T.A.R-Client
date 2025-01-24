@@ -27,6 +27,7 @@ let welcomeSettingWindow;
 let backupRestoreWindow;
 let initInformationWindow;
 let informationWindow;
+let newVersionInfo;
 
 // Property files
 let appProperties;
@@ -125,6 +126,7 @@ function createWindow () {
       if (welcomeSettingWindow) welcomeSettingWindow.webContents.openDevTools();
       if (backupRestoreWindow) backupRestoreWindow.webContents.openDevTools();
       if (initInformationWindow) initInformationWindow.webContents.openDevTools();
+      if (newVersionInfo) newVersionInfo.webContents.openDevTools();
       mainWindow.webContents.openDevTools();
     });
 
@@ -175,6 +177,7 @@ function createWindow () {
       mainWindow = null;
     });
 
+    ipcMain.handle('changeLog', () => showNewVersionInfo(informationWindow));
     ipcMain.handle('getInfoPackage', async (event, arg) => {return await Report.getInfoPackage(arg)});
     ipcMain.handle('auditPlugin', () => Report.auditPlugin(pluginStudioWindow));
     ipcMain.handle('pluginVulnerabilityFix', (event, arg) => Report.pluginVulnerabilityFix(arg));
@@ -1228,7 +1231,48 @@ function setLParameters(str, arg) {
 }
 
 
+const showNewVersionInfo = parent => {
+
+  if (!fs.existsSync(path.resolve(__dirname, 'README.md'))) return;
+
+  const style = {
+    parent: parent,
+    frame: true,
+    movable: true,
+    resizable: true,
+    minimizable: false,
+    alwaysOnTop: false,
+    show: false,
+    width: 650,
+    height: 500,
+    icon: path.resolve(__dirname, 'assets/images/icons/changeLog.png'),
+    webPreferences: {
+      preload: path.resolve(__dirname, 'newVersionInfo-preload.js')
+    },
+    title: L.get("mainInterface.changeLog")
+  }
+
+  const mdInfos = fs.readFileSync(path.resolve(__dirname, 'README.md'), 'utf8');
+  
+  newVersionInfo = new BrowserWindow(style);
+  newVersionInfo.loadFile('./assets/html/newVersionInfo.html');
+  newVersionInfo.setMenu(null);
+  
+  newVersionInfo.once('ready-to-show', () => {
+    newVersionInfo.show();
+    newVersionInfo.webContents.send('initApp', mdInfos);
+  })
+
+  newVersionInfo.on('closed', () => {
+    newVersionInfo = null;
+  })  
+
+}
+
+
 const checkUpdate = async () => {
+
+  showNewVersionInfo(mainWindow);
     
   if (fs.existsSync(path.resolve(__dirname, 'tmp', 'step-2.txt'))) {
     let installType = fs.readFileSync(path.resolve(__dirname, 'tmp', 'step-2.txt'), 'utf8');
@@ -1241,6 +1285,7 @@ const checkUpdate = async () => {
     if (process.platform === 'linux') fs.removeSync(path.resolve(__dirname, 'tmp', 'shell.sh'));
     Avatar.HTTP.socket.emit('installClientVersionDone', appProperties.client);
     infoGreen(L.get('newVersion.step3'));
+    showNewVersionInfo(mainWindow);
   }
   
   if (Config.checkUpdate === true) {
