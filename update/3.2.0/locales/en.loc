@@ -404,6 +404,7 @@
 	"noAvailableFixInfoApp": "<br><b>Note:</b> No major updates are available for the $$ package. One possible solution is to remove it from the application's dependencies and manually address its vulnerabilities.",
 	"noAvailableFixFound": "Not found",
 	"noAvailableFixFoundInfo": "<br><b>Note:</b> No update information is available for the $$ package. This may be due to a misconfiguration of the package. A possible solution is to remove it from the $$ plugin's packages and manually fix its vulnerabilities.",
+	"noAvailableFixFoundInfoApp": "<br><b>Note:</b> No update information is available for the package $$. This might be due to a misconfiguration of the package. A possible solution is to exclude it from the application's packages and manually fix its vulnerabilities.",
 	"fixProgressLabel": "Resolve the vulnerabilities of the $$ package in the $$ plugin...",
 	"updateProgressLabel": "Updating the <b>$$</b> package of the <b>$$</b> plugin to version <b>$$</b>...",
 	"fixInProgress": "Fix in progress...",
