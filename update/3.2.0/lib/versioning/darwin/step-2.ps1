@@ -104,9 +104,15 @@ Write-Host " done" -ForegroundColor Green
 Start-Sleep -Seconds 1
 
 If (($installType -eq "exe") -or ($installType -eq "module")) {
-    Write-Host "⏳​ Installing Electron package in A.V.A.T.A.R application, please wait..." -ForegroundColor DarkMagenta
-    start-process -FilePath "npm" -ArgumentList "install", "--save-dev electron@$electron_version" -NoNewWindow -workingdirectory ".." -Wait
-    Write-Host "Electron package installation done" -ForegroundColor Green
+    Write-Host "⏳​ Installing npm packages in A.V.A.T.A.R application, please wait..." -ForegroundColor DarkMagenta
+    start-process -FilePath "npm" -ArgumentList "install" -NoNewWindow -workingdirectory ".." -Wait
+    Write-Host "npm packages installation done" -ForegroundColor Green
+    Start-Sleep -Seconds 1
+
+    # Uninstalling Electron packager
+    Write-Host "⏳ Uninstalling Electron packager, please wait..." -ForegroundColor DarkMagenta
+    start-process -FilePath "npm" -ArgumentList "uninstall", "@electron/packager" -NoNewWindow -workingdirectory ".." -Wait 
+    Write-Host "Electron packager uninstalled" -ForegroundColor Green
     Start-Sleep -Seconds 1
 }
 
