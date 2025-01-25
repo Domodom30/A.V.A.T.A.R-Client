@@ -1271,7 +1271,7 @@ const showNewVersionInfo = parent => {
 
 
 const checkUpdate = async () => {
-  
+
   if (fs.existsSync(path.resolve(__dirname, 'tmp', 'step-2.txt'))) {
     let installType = fs.readFileSync(path.resolve(__dirname, 'tmp', 'step-2.txt'), 'utf8');
     installType = installType.split('-');
@@ -1289,6 +1289,7 @@ const checkUpdate = async () => {
   if (Config.checkUpdate === true) {
     const result = await github.checkUpdate(mainWindow);
     if (result !== false) {
+      if (fs.existsSync(path.resolve(__dirname, 'README.md'))) fs.removeSync(path.resolve(__dirname, 'README.md'));
       await mainWindow.webContents.send('newVersion', result);
     }
   }
