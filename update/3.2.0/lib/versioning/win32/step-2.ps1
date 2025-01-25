@@ -58,7 +58,7 @@ Start-Sleep -Seconds 5
 if ($del -eq $True) {
     $ErrorActionPreference = 'SilentlyContinue'
     Write-Host "> Removing node_modules directory" -ForegroundColor DarkMagenta
-    Remove-Item ../node_modules -Recurse -Force
+    Remove-Item "../node_modules" -Recurse -Force
     Remove-Item "../package-lock.json" -Force
     If ((Test-Path "../node_modules") -eq $True) {
         Write-Host "> Unable to remove node_modules directory, wait 3 seconds and retry..." -ForegroundColor DarkRed
