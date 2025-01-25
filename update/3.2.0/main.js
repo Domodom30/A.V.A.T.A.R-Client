@@ -1271,9 +1271,7 @@ const showNewVersionInfo = parent => {
 
 
 const checkUpdate = async () => {
-
-  showNewVersionInfo(mainWindow);
-    
+  
   if (fs.existsSync(path.resolve(__dirname, 'tmp', 'step-2.txt'))) {
     let installType = fs.readFileSync(path.resolve(__dirname, 'tmp', 'step-2.txt'), 'utf8');
     installType = installType.split('-');
