@@ -107,6 +107,12 @@ If (($installType -eq "exe") -or ($installType -eq "module")) {
     # start-process -FilePath "npm.cmd" -ArgumentList "install", "--save-dev electron@$electron_version" -NoNewWindow -workingdirectory ".." -Wait
     Write-Host "npm packages installation done" -ForegroundColor Green
     Start-Sleep -Seconds 1
+
+    # Uninstalling Electron packager
+    Write-Host "> Uninstalling Electron packager, please wait..." -ForegroundColor DarkMagenta
+    start-process -FilePath "npm.cmd" -ArgumentList "uninstall", "@electron/packager" -NoNewWindow -workingdirectory . -Wait 
+    Write-Host "Electron packager uninstalled" -ForegroundColor Green
+    Start-Sleep -Seconds 1
 }
 
 # Update Properties

@@ -129,12 +129,6 @@ If (($installType -eq "exe") -or ($installType -eq "module")) {
          }
         $package = "$package/output/$output_platform"
         Start-Sleep -Seconds 1 
-
-         # Uninstalling Electron packager
-        Write-Host "> Uninstalling Electron packager, please wait..." -ForegroundColor DarkMagenta
-        start-process -FilePath "npm.cmd" -ArgumentList "uninstall", "@electron/packager" -NoNewWindow -workingdirectory . -Wait 
-        Write-Host "Electron packager uninstalled" -ForegroundColor Green
-        Start-Sleep -Seconds 1
     } else {
         Write-Host "> Installing node_modules packages, please wait..." -ForegroundColor DarkMagenta
         start-process -FilePath "npm.cmd" -ArgumentList "install" -NoNewWindow -workingdirectory . -Wait
