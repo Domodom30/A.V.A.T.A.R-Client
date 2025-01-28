@@ -5,7 +5,7 @@ Write-Host "■■■■■■■■■■■■■■■■■■■■■■�
 #■ A.V.A.T.A.R 29/10/2024
 
 function CheckDependencies {
-    Write-Host "Checking dependencies..." -ForegroundColor Yellow
+    Write-Host "> Checking dependencies..." -ForegroundColor Yellow
     # Check if npm is installed
     if (-not (Get-Command "npm.cmd" -ErrorAction SilentlyContinue)) {
         Write-Host "npm is not installed. Please install Node.js and npm to continue." -ForegroundColor Green

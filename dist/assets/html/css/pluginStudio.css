@@ -86,13 +86,22 @@ body, html {
 #cy-plugins-div {
   position: absolute;
   left: 0px;
-  top: 0px;
+  top: 80px;
   width: inherit;
-  height: 100% - 80px;
+  height: calc(100% - 80px);
   overflow-y: auto;
   overflow-x: hidden;
 }
 
+
+#cy-create-plugin{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 80px;
+  width: inherit;
+  cursor: pointer;
+}
 
 .action-tab {
   position: absolute;
@@ -114,17 +123,75 @@ body, html {
   display: none;
 }
 
-.createplugin {
-  top: 31px;
+
+.auditplugin-tbl {
+  top: 0px;
   left: 0px;
-  margin-left: 10px;
   position: fixed;
-  height: calc(100% - 31px);
-  width: calc(100% - 10px);
+  height: 100%;
+  width: 100%;
+  background-color: #585858;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+
+.dialog {
+  width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: #585858;
+  max-width: 100%;
+  height: max-content;
+}
+
+.help {
+  position: absolute;
+  left: 40px;
+  top: 25px;
+  z-index: 100;
+}
+
+.pointer-cursor {
+  cursor: pointer;
+}
+
+.container {
+  width: 100%; 
+  margin: 15px 0;
+  align-items: center;
+}
+
+.tblOutdated {
+  position: relative;
+  left: 10px;
+  width: calc(100% - 20px);
+  height: 100%;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.tblAudit-actions {
+  left: 10px;
+  width: calc(100% - 20px);
+  height: 100%;
+  font-size: 12px;
+  margin-top: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.status-packages-xcard {
+  margin-top: 15px;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: calc(100% - 25px);
   display: none;
+}
+
+.status-packages-xtab {
+  justify-content: center;
+  height: auto;
+  width: 100%;
 }
 
 

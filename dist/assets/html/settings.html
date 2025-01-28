@@ -149,10 +149,45 @@
 
           <x-label id="AKA-label" style="margin-top: 10px;"></x-label>
           <x-tagsinput class="input-list" id="AKA-list"></x-tagsinput>
-          <x-button id="delete-AKA-list" size="small" style="cursor: pointer  ; margin-top: 10px;">
-            <x-icon href="#delete"></x-icon>
-            <x-label id="label-delete-AKA-list"></x-label>
-          </x-button>
+          <div id="AKA-action-txt-div" style="margin-top: 10px; width: 100%; height: max-content;">
+            <x-label id="AKA-action-txt-label"></x-label>
+            <div class="options-menu-div" style="margin-top: 5px;">
+              <x-label id="AKA-action-label"></x-label>
+              <x-input style="margin-left: 5px;" id="AKA-plugin" size="small"></x-input>
+              <x-label id="AKA-options-label" style="margin-left: 10px;"></x-label>
+              <x-input class="options-list" id="AKA-options" size="small"></x-input>
+            </div>
+            <x-checkbox id="AKA-action-indexOf" size="small" style="margin-top: 5px;">
+              <x-label id="AKA-action-indexOf-label"></x-label>
+            </x-checkbox>
+          </div>
+          <div id="AKA-sentence-txt-div" style="margin-top: 10px; width: 100%; height: max-content;">
+              <x-label id="AKA-sentence-txt-label"></x-label>
+              <x-checkbox id="AKA-sentence-indexOf" size="small" style="margin-top: 5px;">
+                <x-label id="AKA-sentence-indexOf-label"></x-label>
+              </x-checkbox>
+          </div>
+          <div id="AKA-options-div" class="AKA-options-div">
+            <x-button id="delete-AKA-list" size="small" style="cursor: pointer;">
+              <x-icon href="#delete"></x-icon>
+              <x-label id="label-delete-AKA-list"></x-label>
+            </x-button>
+            <x-label id="new-AKA-plugin-label" style="margin-left: 10px;"></x-label>
+            <x-select size="small" style="cursor: pointer; margin-left: 5px;">
+                <x-menu id="directAKAMenu">
+                  <x-menuitem class="direct-AKA-shape" id="select-direct-AKA" value="select-direct-AKA" toggled><x-label id="select-AKA-label"></x-label></x-menuitem>
+                  <hr>
+                  <x-menuitem class="direct-AKA-shape" id="nlp-AKA" value="nlp-AKA"><x-label id="nlp-AKA-label"></x-label></x-menuitem>
+                  <x-menuitem class="direct-AKA-shape" id="action-AKA" value="action-AKA"><x-label id="action-AKA-label"></x-label></x-menuitem>
+                </x-menu>  
+            </x-select>
+            <x-button id="save-AKA-plugin" size="small" style="cursor: pointer; margin-left: 10px;">
+              <x-label id="save-AKA-plugin-label"></x-label>
+            </x-button>
+            <x-button id="delete-AKA-plugin" size="small" style="cursor: pointer; margin-left: 10px;">
+              <x-label id="delete-AKA-plugin-label"></x-label>
+            </x-button>
+          </div>
 
           <x-label class="margin-top-15" id="AKA-separator-label"></x-label>
           <x-tagsinput class="input-list" id="AKA-separator-list"></x-tagsinput>
@@ -172,8 +207,7 @@
           <x-switch id="server-speak" class="margin-top-15" size="small"><x-label id="server-speak-label"></x-label></x-switch>
           <div class="menu-div margin-top-10">
             <x-label class="padding-5" id="server-speak-module-label"></x-label>
-            <x-input id="server-speak-module" size="small">
-            </x-input>
+            <x-input id="server-speak-module" size="small"></x-input>
           </div>
           
           <x-switch id="loop-mode" size="small" class="margin-top-15"><x-label id="loop-mode-label"></x-label></x-switch>

@@ -58,7 +58,7 @@ Start-Sleep -Seconds 5
 if ($del -eq $True) {
     $ErrorActionPreference = 'SilentlyContinue'
     Write-Host "> Removing node_modules directory" -ForegroundColor DarkMagenta
-    Remove-Item ../node_modules -Recurse -Force
+    Remove-Item "../node_modules" -Recurse -Force
     Remove-Item "../package-lock.json" -Force
     If ((Test-Path "../node_modules") -eq $True) {
         Write-Host "> Unable to remove node_modules directory, wait 3 seconds and retry..." -ForegroundColor DarkRed
@@ -72,13 +72,13 @@ if ($del -eq $True) {
     }
 
     Write-Host "> Removing old Chrome version" -ForegroundColor DarkMagenta
-    Remove-Item ../core/chrome/.cache -Recurse -Force
-    If ((Test-Path "../core/chrome/.cache") -eq $True) {
+    Remove-Item "$env:USERPROFILE/.cache/puppeteer" -Recurse -Force
+    If ((Test-Path "$env:USERPROFILE/.cache/puppeteer") -eq $True) {
         Write-Host "> Unable to remove old Chrome version, wait 3 seconds and retry..." -ForegroundColor DarkRed
         Start-Sleep -Seconds 3
-        Remove-Item ../core/chrome/.cache -Recurse -Force
+        Remove-Item "$env:USERPROFILE/.cache/puppeteer" -Recurse -Force
     } 
-    If ((Test-Path "../core/chrome/.cache") -eq $True) {
+    If ((Test-Path "$env:USERPROFILE/.cache/puppeteer") -eq $True) {
         Write-Host "> Unable to remove the old version of Chrome." -ForegroundColor DarkRed
         Write-Host "> You can remove the old Chrome version manually in app/core/chrome/.cache/puppeteer/chrome and chrome-headless-shell folders" -ForegroundColor DarkRed
     } else {
@@ -102,9 +102,15 @@ Write-Host " done" -ForegroundColor Green
 Start-Sleep -Seconds 1
 
 If (($installType -eq "exe") -or ($installType -eq "module")) {
-    Write-Host "> Installing Electron package in A.V.A.T.A.R application, please wait..." -ForegroundColor DarkMagenta
-    start-process -FilePath "npm.cmd" -ArgumentList "install", "--save-dev electron@$electron_version" -NoNewWindow -workingdirectory ".." -Wait
-    Write-Host "Electron package installation done" -ForegroundColor Green
+    Write-Host "> Installing npm packages in the A.V.A.T.A.R application, please wait..." -ForegroundColor DarkMagenta
+    start-process -FilePath "npm.cmd" -ArgumentList "install" -NoNewWindow -workingdirectory ".." -Wait
+    Write-Host "npm packages installation done" -ForegroundColor Green
+    Start-Sleep -Seconds 1
+
+    # Uninstalling Electron packager
+    Write-Host "> Uninstalling Electron packager, please wait..." -ForegroundColor DarkMagenta
+    start-process -FilePath "npm.cmd" -ArgumentList "uninstall", "@electron/packager" -NoNewWindow -workingdirectory ".." -Wait 
+    Write-Host "Electron packager uninstalled" -ForegroundColor Green
     Start-Sleep -Seconds 1
 }
 

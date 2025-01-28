@@ -47,6 +47,24 @@ form {
 }
 
 
+.options-menu-div {
+    position: relative;
+    height: max-content;
+    width: calc(100% - 20px);
+    display: flex;
+    align-items: center;
+}
+
+.AKA-options-div {
+    margin-top: 10px;
+    position: relative;
+    height: max-content;
+    width: calc(100% - 20px);
+    display: flex;
+    align-items: center;
+}
+
+
 #xcard-screen-saver{
     position: relative;
     margin-top: 10px;
@@ -134,6 +152,13 @@ form {
     position: relative;
     width: calc(100% - 20px);
     margin-top: 5px;
+}
+
+.options-list {
+    position: relative;
+    width: calc(100% - 0px);
+    max-width: calc(100% - 0px);
+    margin-left: 5px;
 }
 
 .card-list {

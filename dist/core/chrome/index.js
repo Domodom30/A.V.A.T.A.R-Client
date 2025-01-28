@@ -69,26 +69,100 @@ function Regonizer () {
 }
 
 
+function processPhraseAndReturnFound(array, obj, phrase) {
+  const lowerCasePhrase = phrase.toLowerCase();
+
+  const validKeys = Object.keys(obj);
+  for (const key of validKeys) {
+      const lowerCaseKey = key.toLowerCase(); 
+      const regex = new RegExp(`\\b${lowerCaseKey}\\b`, 'g'); 
+      if (regex.test(lowerCasePhrase)) {
+          const index = array.findIndex(item => item.toLowerCase() === lowerCaseKey);
+          if (index !== -1) {
+              array.splice(index, 1); 
+          }
+      }
+  }
+
+  for (const item of array) {
+      const lowerCaseItem = item.toLowerCase(); 
+      const regex = new RegExp(`\\b${lowerCaseItem}\\b`, 'g'); 
+      if (regex.test(lowerCasePhrase)) {
+          return item; 
+      }
+  }
+
+  return null;
+}
+
+
+function getDirectAKA (sentence) {
+
+    let directAKA;
+    if (globalOptions.config['direct-AKA'] && globalOptions.config['direct-AKA'][globalOptions.config.speech.locale]) {
+
+      const result = processPhraseAndReturnFound(globalOptions.config.AKA[globalOptions.config.speech.locale], globalOptions.config['direct-AKA'][globalOptions.config.speech.locale], sentence); 
+      if (!result) {
+        Object.entries(globalOptions.config['direct-AKA'][globalOptions.config.speech.locale]).forEach(([key, value]) => {
+          let found;   
+          if (value.Of === true) {
+            if ((sentence.toLowerCase().indexOf(key.toLowerCase()) !== -1)) found = true;
+          } else {
+            if (key.toLowerCase() === sentence.toLowerCase()) found = true;
+          }
+        
+          if (found) {
+            if (value.plugin) {
+              directAKA = {
+                'plugin': value.plugin,
+                'options': value.action,
+                'type': "action"
+              }
+            } else {
+              directAKA = {
+                'type': "sentence"
+              }
+            }
+          }
+        });
+      }
+    }
+
+    return directAKA;
+}
+
+
 function manageAKA(speechResult, threashold, listenFalse) {
+  let isAKA;
+  let directAKA = getDirectAKA(speechResult);
+  if (!directAKA) { 
+    isAKA = globalOptions.config.AKA[globalOptions.config.speech.locale].find(AKA => {
+      return AKA.toLowerCase() == speechResult.toLowerCase();
+    });
+  }
 
-  let isAKA = globalOptions.config.AKA[globalOptions.config.speech.locale].find(AKA => {
-    return AKA.toLowerCase() == speechResult.toLowerCase();
-  });
-
-  if(isAKA) {
+  if (isAKA || directAKA) {
       if (listenFalse && listenFalse == true) {
         globalOptions.AKA = true;
         globalOptions.listen = true;
       }
 
-      let url = "https://"+globalOptions.address+":"+globalOptions.port+"/AvatarServer?AKA=true&threashold="+threashold;
+      let url;
+      if (isAKA) {
+         url = "https://"+globalOptions.address+":"+globalOptions.port+"/AvatarServer?AKA=true&threashold="+threashold;
+      } else {
+        url = directAKA.type === 'action'
+        ? "https://"+globalOptions.address+":"+globalOptions.port+"/AvatarServer?directActionAKA="+encodeURIComponent(speechResult)+"&plugin="+encodeURIComponent(directAKA.plugin)+"&options="+encodeURIComponent(directAKA.options)+"&threashold="+threashold
+        : "https://"+globalOptions.address+":"+globalOptions.port+"/AvatarServer?directNlpAKA="+encodeURIComponent(speechResult)+"&threashold="+threashold;
+      }
+
       sendToAvatar(url);
   } else {
       let indexAKA = globalOptions.config.AKA[globalOptions.config.speech.locale].findIndex(AKA => {
         return speechResult.toLowerCase().indexOf(AKA.toLowerCase()+" ") !== -1;
       });
 
-      // indexAKA found
+      // AKA found
       if(indexAKA !== undefined && indexAKA !== -1 && speechResult.toLowerCase().indexOf(globalOptions.config.AKA[globalOptions.config.speech.locale][indexAKA].toLowerCase()) === 0) {
         speechResult = speechResult.toLowerCase().replace(globalOptions.config.AKA[globalOptions.config.speech.locale][indexAKA].toLowerCase()+" ", "")
           

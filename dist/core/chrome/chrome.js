@@ -111,11 +111,13 @@ function initRegonizer () {
             timeoutResponse = timeoutRestart = null;
             res.writeHead(200).end();
 
-            if (req.query.action) await Avatar.Listen.manageActions (req.query.action, true);
-            if (req.query.listen) await Avatar.Listen.manageActions (req.query.listen, false);
-            if (req.query.AKA) await Avatar.Listen.AKA ();
-            if (req.query.voices) await Avatar.Listen.remoteVoices (JSON.parse(req.query.voices));
-            if (req.query.setvoices) Avatar.Interface.setRemoteVoices (JSON.parse(req.query.setvoices));
+            if (req.query.action) await Avatar.Listen.manageActions(req.query.action, true);
+            if (req.query.listen) await Avatar.Listen.manageActions(req.query.listen, false);
+            if (req.query.AKA) await Avatar.Listen.AKA();
+            if (req.query.directActionAKA) await Avatar.Listen.directActionAKA(req.query.directActionAKA, req.query.plugin, req.query.options);
+            if (req.query.directNlpAKA) await Avatar.Listen.manageActions(req.query.directNlpAKA, true);
+            if (req.query.voices) await Avatar.Listen.remoteVoices(JSON.parse(req.query.voices));
+            if (req.query.setvoices) Avatar.Interface.setRemoteVoices(JSON.parse(req.query.setvoices));
             if (req.query.endSpeak) await Avatar.Listen.remoteSpeakEnd(req.query.endSpeak);
             if (req.query.errorSpeak) {
                 error("Google Chrome error: " + req.query.errorSpeak || "unknow");

@@ -102,6 +102,27 @@ async function AKA() {
 }
 
 
+function parseStringToObject(str) {
+    const pairs = str.split('~');
+    const action = {};
+
+    pairs.forEach(pair => {
+        const [key, value] = pair.split('=');
+        if (key !== '') action[key] = value;
+    });
+    return { action };
+}
+
+
+function directActionAKA(sentence, plugin, options) {
+    info(L.get(['mainInterface.intent', sentence]));
+    isActionAka = true;
+    info(L.get('mainInterface.sendIntentRule'));
+    options = parseStringToObject(options);
+    Avatar.HTTP.socket.emit('plugin_action', plugin, options);
+}
+
+
 async function silence() {
     if (!is_silence) {
         await mute(Config.client);
@@ -156,7 +177,6 @@ async function isGlobalIntercom (sentence) {
 async function action (sentence, aka) {
 
     info(L.get(['mainInterface.intent', sentence]));
-
     isActionAka = aka;
 
     if (await isGlobalIntercom(sentence) === true ) {
@@ -370,26 +390,27 @@ async function countOccurences (buffer, separator, separators) {
 function isGrammar(sentence, rules) {
 
     return new Promise((resolve) => {
-
         for (var i=0; i < rules.grammar.length; i++){
-            if (sentence.toLowerCase() == rules.grammar[i].toLowerCase()) {
+            if (sentence !== '*' && sentence.toLowerCase() === rules.grammar[i].toLowerCase()) {
                 return resolve (rules.tags[i]);
             }
         }
 
         var match;
         // Only for French & English
-        if (soundex) {
+        if (sentence !== '*' && soundex) {
             var sdx = soundex(sentence, sentence.length);
             var score = 0;
             for (var i=0; i < rules.grammar.length; i++){
-                var sdx_gram = soundex(rules.grammar[i], rules.grammar[i].length);
-                var levens  = levenshtein(sdx, sdx_gram);
-                levens  = 1 - (levens / sdx_gram.length);
-                if (levens > score && levens >= Config.listen.threashold) {
-                    infoOrange(L.get(['mainInterface.soundex', rules.grammar[i]]));
-                    score = levens;
-                    match = rules.tags[i];
+                if (rules.grammar[i] !== '*') {
+                    var sdx_gram = soundex(rules.grammar[i], rules.grammar[i].length);
+                    var levens  = levenshtein(sdx, sdx_gram);
+                    levens  = 1 - (levens / sdx_gram.length);
+                    if (levens > score && levens >= Config.listen.threashold) {
+                        infoOrange(L.get(['mainInterface.soundex', rules.grammar[i]]));
+                        score = levens;
+                        match = rules.tags[i];
+                    }
                 }
             }
         }
@@ -397,7 +418,7 @@ function isGrammar(sentence, rules) {
         // Generics taken into account
         if (!match) {
             for (var i=0; i < rules.grammar.length; i++){
-                if (rules.grammar[i] == '*') {
+                if (rules.grammar[i] === '*') {
                     match = rules.tags[i] + ':' + sentence.toLowerCase();
                     break;
                 }
@@ -410,10 +431,8 @@ function isGrammar(sentence, rules) {
 
 
 async function getTag(sentence, rules, callback) {
-
     var tag = await isGrammar(sentence, rules);
     if (tag) return callback(tag);
-
     restartAskme(rules);
 }
 
@@ -475,6 +494,7 @@ async function initListen () {
         start: startReconizerListen,
         manageActions: manageActions,
         AKA: AKA,
+        directActionAKA: directActionAKA,
         end: end,
         stoptListenAction: stoptListenAction,
         startListen: startListen,
