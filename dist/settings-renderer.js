@@ -716,7 +716,7 @@ async function updateProperties() {
     if (!appProperties.AKA[currentlanguage]) appProperties.AKA[currentlanguage] = {};
     appProperties.AKA[currentlanguage] = getXtagList("AKA-list");
 
-    if (Object.keys(AKAs[currentlanguage]).length > 0) {
+    if (AKAs[currentlanguage] && Object.keys(AKAs[currentlanguage]).length > 0) {
         if (!appProperties["direct-AKA"]) appProperties["direct-AKA"] = {};
         if (!appProperties["direct-AKA"][currentlanguage]) appProperties["direct-AKA"][currentlanguage] = {};
         appProperties["direct-AKA"][currentlanguage] = AKAs[currentlanguage];
