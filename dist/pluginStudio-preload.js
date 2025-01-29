@@ -25,4 +25,3 @@ contextBridge.exposeInMainWorld('electronAPI', {
   isPluginExist: (arg) => ipcRenderer.invoke('isPluginExist', arg),
   quitStudio: (arg) => ipcRenderer.invoke('quitStudio', arg)
 })
-

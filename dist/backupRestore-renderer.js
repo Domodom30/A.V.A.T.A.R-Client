@@ -169,9 +169,9 @@ async function Lget (top, target, param) {
 
 function setLangTargets() {
     return new Promise(async (resolve) => {
-      document.getElementById('backup').innerHTML = await Lget("backupRestore", "backup");
-      document.getElementById('delete').innerHTML = await Lget("backupRestore", "delete");
-      document.getElementById('restore').innerHTML = await Lget("backupRestore", "restore");
+      document.getElementById('backup-label').innerHTML = await Lget("backupRestore", "backup");
+      document.getElementById('delete-label').innerHTML = await Lget("backupRestore", "delete");
+      document.getElementById('restore-label').innerHTML = await Lget("backupRestore", "restore");
 
       document.getElementById('backup-properties-label').innerHTML = await Lget("backupRestore", "backupPropertiesLabel");
       document.getElementById('backup-interface-label').innerHTML = await Lget("backupRestore", "backupInterfaceLabel");

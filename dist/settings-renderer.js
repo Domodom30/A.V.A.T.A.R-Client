@@ -1,4 +1,4 @@
-let interfaceProperties, appProperties, initialisation = false, BCP47, BCP47app, voices, AKAs, currentKeyWord;
+let interfaceProperties, appProperties, initialisation = false, BCP47, BCP47app, voices;
 
 window.onbeforeunload = async (e) => {
     e.returnValue = false;
@@ -63,7 +63,7 @@ document.getElementById("voice-type").addEventListener("click", (event) => {
         let type;
         if (document.getElementById("web-voice").toggled) {
             type = "web-voice";
-            document.getElementById('voice-pitch-div').style.display = "inline-flex";
+            document.getElementById('voice-pitch-div').style.display = "flex";
         } else {
             type = "local-voice";
             document.getElementById('voice-pitch-div').style.display = "none";
@@ -292,225 +292,16 @@ async function Lget (top, target, param, param1) {
 }
 
 
-document.getElementById("AKA-list").addEventListener("add", (event) => {
-    let addedTag = event.detail;
-    addedTag.onclick = () => {
-        currentKeyWord = addedTag.querySelector("x-label").innerHTML;
-        refreshDirectAKA("select-direct-AKA", null, true);
-    };
-    currentKeyWord = addedTag.querySelector("x-label").innerHTML;
-    refreshDirectAKA("select-direct-AKA", null, true);
-});
-
-
-document.getElementById("delete-AKA-plugin").addEventListener("click", async (event) => {
-
-    if (currentKeyWord) {
-        let directAKASelection = getDirectAKASelection();
-        let currentlanguage = getCurrentBCP47();
-
-        if (AKAs[currentlanguage] && AKAs[currentlanguage][currentKeyWord]) {
-            if (directAKASelection === "action-AKA") {
-                if (document.getElementById("AKA-plugin").value !== "") {
-                    delete AKAs[currentlanguage][currentKeyWord];
-                    refreshDirectAKA("select-direct-AKA");
-                    notification(await Lget("settings", "deleteAKA", currentKeyWord));
-                } else {
-                    notification(await Lget("settings", "noAssocPlugin", currentKeyWord), true);
-                }
-            } else if (directAKASelection === "nlp-AKA") {
-                if (AKAs[currentlanguage][currentKeyWord].sentence) {
-                    delete AKAs[currentlanguage][currentKeyWord];
-                    refreshDirectAKA("select-direct-AKA");
-                    notification(await Lget("settings", "deleteAKA", currentKeyWord));
-                } else {
-                    notification(await Lget("settings", "noKeyWordRule", currentKeyWord), true);
-                }
-            } else {
-                notification(await Lget("settings", "noKeyWordAction", currentKeyWord), true);
-            }
-        } else {
-            notification(await Lget("settings", "noKeyWordAction", currentKeyWord), true);
-        }
-    } else {
-        notification(await Lget("settings", "keywordFirstClic"), true);
-    }
-});
-
-
-document.getElementById("save-AKA-plugin").addEventListener("click", async (event) => {
-
-    if (currentKeyWord) {
-        let directAKASelection = getDirectAKASelection();
-        if (directAKASelection === "select-direct-AKA") {
-            return notification(await Lget("settings", "BeforeSave", currentKeyWord), true);
-        }
-
-        if ((directAKASelection === 'action-AKA' && document.getElementById("AKA-plugin").value !== "") ||
-        directAKASelection === 'nlp-AKA') {
-            var found = false;
-            let currentlanguage = getCurrentBCP47();
-
-            if (AKAs[currentlanguage]) {
-                Object.entries(AKAs[currentlanguage]).forEach(([key, value]) => {
-                    if (key === currentKeyWord) {
-                        if (directAKASelection === "action-AKA") {
-                            value.plugin = document.getElementById("AKA-plugin").value;
-                            value.action = document.getElementById("AKA-options").value;
-                            value.Of = document.getElementById('AKA-action-indexOf').toggled;
-                        } else if (directAKASelection === "nlp-AKA") {
-                            value.sentence = true;
-                            value.Of = document.getElementById('AKA-sentence-indexOf').toggled;
-                        } 
-                        found = true;   
-                    }
-                });
-            } else {
-                AKAs[currentlanguage] = {};
-            }
-
-            if (!found) {
-                if (directAKASelection === "action-AKA") {
-                    AKAs[currentlanguage][currentKeyWord] = {
-                        "plugin": document.getElementById("AKA-plugin").value,
-                        "action": document.getElementById("AKA-options").value,
-                        "Of": document.getElementById("AKA-action-indexOf").toggled
-                    }
-                } else {
-                    AKAs[currentlanguage][currentKeyWord] = {
-                        "sentence": true,
-                        "Of": document.getElementById("AKA-sentence-indexOf").toggled
-                    }
-                }
-            } 
-
-            if (directAKASelection === "action-AKA") {
-                document.getElementById("AKA-action-txt-label").innerHTML = await Lget("settings", "alreadyAssoc", currentKeyWord);
-                notification(await Lget("settings", "keywordAssoc", currentKeyWord, document.getElementById("AKA-plugin").value));
-            } else {
-                document.getElementById("AKA-sentence-txt-label").innerHTML = await Lget("settings", "alreadyKeywordRule", currentKeyWord);
-                notification(await Lget("settings", "KeywordRule", currentKeyWord));
-            }
-        } else {
-            if (directAKASelection === 'action-AKA') {
-                notification(await Lget("settings", "pluginOptionAssoc", currentKeyWord), true);
-            } else {
-                notification(await Lget("settings", "selectDirectActionFirst", currentKeyWord), true);
-            }
-        }
-    } else {
-        refreshDirectAKA("select-direct-AKA");
-        notification(await Lget("settings", "selectKeywordFirst"), true);
-    }
-});
-
-
-function getDirectAKASelection() {
-    let directAKAMenu = document.getElementById('directAKAMenu');
-    for (let i in directAKAMenu.childNodes) {
-        if (directAKAMenu.childNodes[i].toggled) {
-            return directAKAMenu.childNodes[i].value;
-        }
-    }
-}
-
-
-async function keywordByAction (inner, openedByClick) {
-
-    let directAKASelection = getDirectAKASelection();
-    
-    var found = false;
-    let currentlanguage = getCurrentBCP47();
-    if (AKAs[currentlanguage]) {
-        Object.entries(AKAs[currentlanguage]).forEach(([key, value]) => {
-            if (key === inner) {
-                if (value.plugin) {
-                    document.getElementById("select-direct-AKA").toggled = false;
-                    document.getElementById("nlp-AKA").toggled = false;
-                    document.getElementById("action-AKA").toggled = true;
-                    document.getElementById("AKA-plugin").value = value.plugin;
-                    document.getElementById("AKA-options").value = value.action;
-                    document.getElementById("AKA-action-indexOf").toggled = value.Of;
-                    directAKASelection = "action-AKA"
-                } else if (value.sentence) {
-                    document.getElementById("select-direct-AKA").toggled = false;
-                    document.getElementById("action-AKA").toggled = false;
-                    document.getElementById("nlp-AKA").toggled = true;
-                    document.getElementById("AKA-sentence-indexOf").toggled = value.Of;
-                    directAKASelection = "nlp-AKA"
-                    found = true;
-                }
-                found = true;
-            } 
-        });
-    }
-
-    if (found) {
-        if (directAKASelection === "action-AKA") {
-            document.getElementById("AKA-action-txt-label").innerHTML = await Lget("settings", "alreadyAssoc", currentKeyWord);
-            resetDirectAkaBySentence(true);
-            document.getElementById("AKA-action-txt-div").style.display = "";
-        } else {
-            document.getElementById("AKA-sentence-txt-label").innerHTML = await Lget("settings", "alreadyKeywordRule", currentKeyWord);
-            resetDirectAkaByAction(true);
-            resetDirectAkaBySentence();
-        }
-    } else {
-        if (openedByClick) {
-            if (currentKeyWord) {
-                if (directAKASelection === "action-AKA") {
-                    document.getElementById("AKA-action-txt-label").innerHTML = await Lget("settings", "addKeywordPlugin", currentKeyWord);
-                    resetDirectAkaByAction();
-                } else if (directAKASelection === "nlp-AKA") {
-                    document.getElementById("AKA-sentence-txt-label").innerHTML = await Lget("settings", "addSentence", currentKeyWord);
-                    resetDirectAkaBySentence();
-                } else {
-                    notification(await Lget("settings", "selectDirectActionFirst", currentKeyWord), true);
-                    resetDirectAkaByAction(true);
-                    resetDirectAkaBySentence(true);
-                }
-            } else {
-                refreshDirectAKA("select-direct-AKA");
-                notification(await Lget("settings", "selectKeywordFirstKeyword"), true);
-            }
-        } else {
-            if (directAKASelection === "action-AKA") {
-                resetDirectAkaByAction(true);
-            } else {
-                resetDirectAkaBySentence(true);
-            }
-        }
-    }
-}
-
-
-function resetDirectAkaByAction (hide) {
-    document.getElementById("AKA-plugin").value = "";
-    document.getElementById("AKA-options").value = "";
-    document.getElementById("AKA-action-txt-div").style.display = hide ? "none" : "";
-}
-
-
-function resetDirectAkaBySentence (hide) {
-    document.getElementById("AKA-sentence-txt-div").style.display = hide ? "none" : "";
-}
-
-
-function setXtagList(list, ele, sentence) {
+function setXtagList(list, ele) {
     let XTagsinput = document.getElementById(ele);
     list.forEach(async (elem) => {
         let inner = (elem === 'by default') ? await Lget("settings", "auto") : elem;
         let tag = document.createElement("x-tag");
         tag.value = elem;
         tag.innerHTML = `<x-label>${inner}</x-label>`;
-        if (sentence) tag.onclick = () => {
-            currentKeyWord = tag.value;
-            refreshDirectAKA("select-direct-AKA", null, true);
-        };
         XTagsinput.appendChild(tag);
     });
 }
-
 
 function getXtagList(ele) {
     let list = [];
@@ -572,7 +363,7 @@ function setRuleGroup(tag) {
     while (Xtags.firstChild) {
         Xtags.removeChild(Xtags.lastChild);
     }
-    if (appProperties.AKA[tag]) setXtagList(appProperties.AKA[tag], "AKA-list", true);
+    if (appProperties.AKA[tag]) setXtagList(appProperties.AKA[tag], "AKA-list");
 
     Xtags = document.getElementById("AKA-separator-list");
     while (Xtags.firstChild) {
@@ -709,30 +500,19 @@ async function updateProperties() {
 
     // Dialog tab
     appProperties.speech.speechToText = document.getElementById('recognizer-type').value;
-
-    let currentlanguage = getCurrentBCP47();
-    appProperties.speech.locale = currentlanguage;
-     
-    if (!appProperties.AKA[currentlanguage]) appProperties.AKA[currentlanguage] = {};
-    appProperties.AKA[currentlanguage] = getXtagList("AKA-list");
-
-    if (AKAs[currentlanguage] && Object.keys(AKAs[currentlanguage]).length > 0) {
-        if (!appProperties["direct-AKA"]) appProperties["direct-AKA"] = {};
-        if (!appProperties["direct-AKA"][currentlanguage]) appProperties["direct-AKA"][currentlanguage] = {};
-        appProperties["direct-AKA"][currentlanguage] = AKAs[currentlanguage];
-    } else {
-        if (appProperties["direct-AKA"] && appProperties["direct-AKA"][currentlanguage]) {
-            delete appProperties["direct-AKA"][currentlanguage];
-            if (Object.keys(appProperties["direct-AKA"]).length === 0) {
-                delete appProperties["direct-AKA"];
-            }
+    let BCP47 = document.getElementById('BCP47');
+    for (let i in BCP47.childNodes) {
+        if (BCP47.childNodes[i].toggled) {
+            appProperties.speech.locale = BCP47.childNodes[i].value;
+            break;
         }
     }
-
-    if (!appProperties.action_separators[currentlanguage]) appProperties.action_separators[currentlanguage] = {};
-    appProperties.action_separators[currentlanguage] = getXtagList("AKA-separator-list");
-    if (!appProperties.refresh_AKA[currentlanguage]) appProperties.refresh_AKA[currentlanguage] = {};
-    appProperties.refresh_AKA[currentlanguage] = getXtagList("AKA-restart-list");
+    if (!appProperties.AKA[appProperties.speech.locale]) appProperties.AKA[appProperties.speech.locale] = {};
+    appProperties.AKA[appProperties.speech.locale] = getXtagList("AKA-list");
+    if (!appProperties.action_separators[appProperties.speech.locale]) appProperties.action_separators[appProperties.speech.locale] = {};
+    appProperties.action_separators[appProperties.speech.locale] = getXtagList("AKA-separator-list");
+    if (!appProperties.refresh_AKA[appProperties.speech.locale]) appProperties.refresh_AKA[appProperties.speech.locale] = {};
+    appProperties.refresh_AKA[appProperties.speech.locale] = getXtagList("AKA-restart-list");
     appProperties.speech.server_speak = document.getElementById('server-speak').toggled;
     appProperties.speech.module = document.getElementById('server-speak-module').value;
 
@@ -741,6 +521,7 @@ async function updateProperties() {
     appProperties.speech.timeout = document.getElementById('timout-speak').value;
     
     // Voice
+    let currentlanguage = getCurrentBCP47();
     const voiceType = document.getElementById('voice-type');
     for (let i in voiceType.childNodes) {
         if (voiceType.childNodes[i].toggled) {
@@ -762,21 +543,21 @@ async function updateProperties() {
     appProperties.voices.test[currentlanguage] = document.getElementById('test-sentence').value;
 
     //rules
-    if (!appProperties.locale[currentlanguage]) appProperties.locale[currentlanguage] = {};
-    appProperties.locale[currentlanguage].tts_thank = getXtagList("thx-rule");
-    appProperties.locale[currentlanguage].tts_cancel = getXtagList("stop-rule");
-    appProperties.locale[currentlanguage].tts_restoreContext = getXtagList("listen-answer");
-    appProperties.locale[currentlanguage].tts_restart_restoreContext = getXtagList("listen-again-answer");
-    appProperties.locale[currentlanguage].restart = getXtagList("askme-again-answer");
-    appProperties.locale[currentlanguage].answers_thank = getXtagList("thx-answer");
-    appProperties.locale[currentlanguage].answers_cancel = getXtagList("stop-answer");
+    if (!appProperties.locale[appProperties.speech.locale]) appProperties.locale[appProperties.speech.locale] = {};
+    appProperties.locale[appProperties.speech.locale].tts_thank = getXtagList("thx-rule");
+    appProperties.locale[appProperties.speech.locale].tts_cancel = getXtagList("stop-rule");
+    appProperties.locale[appProperties.speech.locale].tts_restoreContext = getXtagList("listen-answer");
+    appProperties.locale[appProperties.speech.locale].tts_restart_restoreContext = getXtagList("listen-again-answer");
+    appProperties.locale[appProperties.speech.locale].restart = getXtagList("askme-again-answer");
+    appProperties.locale[appProperties.speech.locale].answers_thank = getXtagList("thx-answer");
+    appProperties.locale[appProperties.speech.locale].answers_cancel = getXtagList("stop-answer");
 
     //Intercom
-    if (!appProperties.intercom.locale[currentlanguage]) appProperties.intercom.locale[currentlanguage] = {};
-    appProperties.intercom.locale[currentlanguage].rules = getXtagList("activate-intercom");
-    appProperties.intercom.locale[currentlanguage].global = getXtagList("activate-global-intercom");
-    appProperties.intercom.locale[currentlanguage].start = getXtagList("answer-intercom");
-    appProperties.intercom.locale[currentlanguage].send = getXtagList("send-intercom");
+    if (!appProperties.intercom.locale[appProperties.speech.locale]) appProperties.intercom.locale[appProperties.speech.locale] = {};
+    appProperties.intercom.locale[appProperties.speech.locale].rules = getXtagList("activate-intercom");
+    appProperties.intercom.locale[appProperties.speech.locale].global = getXtagList("activate-global-intercom");
+    appProperties.intercom.locale[appProperties.speech.locale].start = getXtagList("answer-intercom");
+    appProperties.intercom.locale[appProperties.speech.locale].send = getXtagList("send-intercom");
     appProperties.intercom.silence = document.getElementById('silence-intercom').value;
     appProperties.intercom.thresholdStart = document.getElementById('thresholdStart-intercom').value;
     appProperties.intercom.thresholdStop = document.getElementById('thresholdStop-intercom').value;
@@ -842,9 +623,9 @@ async function setDeleteLabel(event, xtag, label, found, tblfound) {
                 notification(await Lget("settings", "sameItem"));
                 return;
             }
-            if (!tblfound) tblfound = [];
-            tblfound.push(found);
-            document.getElementById(label).innerHTML = await Lget("settings", "remove", xMenus[i].value);
+            if (!tblfound) tblfound = []
+            tblfound.push(found)
+            document.getElementById(label).innerHTML = await Lget("settings", "remove", xMenus[i].value)
             return tblfound;
         }
     }
@@ -993,8 +774,6 @@ document.getElementById('delete-AKA-list').addEventListener('click', async () =>
     let xMenus = document.getElementById("AKA-list").childNodes;
     let remove = document.getElementById("label-delete-AKA-list").innerHTML;
     await deleteListItem(xMenus, remove);
-    refreshDirectAKA("select-direct-AKA");
-    currentKeyWord = null;
 })
 
 
@@ -1136,22 +915,6 @@ async function getVoices (tag) {
 }
 
 
-function refreshDirectAKA(elem, inner, setKeyword, byClick) {
-    setTimeout(() => { 
-        document.getElementById("AKA-sentence-indexOf").toggled = false;
-        document.getElementById("AKA-action-indexOf").toggled = false;
-        document.getElementById("nlp-AKA").toggled = false;
-        document.getElementById("action-AKA").toggled = false;
-        document.getElementById("select-direct-AKA").toggled = false;
-        document.getElementById(elem).toggled = true;
-        resetDirectAkaByAction (true);
-        resetDirectAkaBySentence (true);
-        if (setKeyword === true) {
-            keywordByAction((inner ? inner : currentKeyWord), (byClick ? byClick : false));
-        }
-    }, 100)
-}
-
 async function setHTMLContent() {
     // Parameters tab
     document.getElementById('info-start').toggled = appProperties.verbose;
@@ -1196,27 +959,10 @@ async function setHTMLContent() {
     document.getElementById('powershell').value = appProperties.powerShell;
 
     // Dialog tab
-    let currentlanguage = appProperties.speech.locale;
-
     document.getElementById('recognizer-type').value = appProperties.speech.speechToText;
-    setXtagList(appProperties.AKA[currentlanguage], "AKA-list", true);
-    
-    resetDirectAkaByAction(true);
-    resetDirectAkaBySentence(true);
-    AKAs = appProperties["direct-AKA"] ? appProperties["direct-AKA"] : {};
-
-    let directAKAMenu = document.getElementById('directAKAMenu');
-    for (var i in directAKAMenu.childNodes) {
-        if (directAKAMenu.childNodes[i].value === 'nlp-AKA') 
-            directAKAMenu.childNodes[i].onclick = () => refreshDirectAKA("nlp-AKA", null, true, true); 
-        if (directAKAMenu.childNodes[i].value === 'action-AKA') 
-            directAKAMenu.childNodes[i].onclick = () => refreshDirectAKA("action-AKA", null, true, true); 
-        if (directAKAMenu.childNodes[i].value === 'select-direct-AKA') 
-            directAKAMenu.childNodes[i].onclick = () => refreshDirectAKA("select-direct-AKA", null, true, true); 
-    } 
-
-    setXtagList(appProperties.action_separators[currentlanguage], "AKA-separator-list");
-    setXtagList(appProperties.refresh_AKA[currentlanguage], "AKA-restart-list");
+    setXtagList(appProperties.AKA[appProperties.speech.locale], "AKA-list");
+    setXtagList(appProperties.action_separators[appProperties.speech.locale], "AKA-separator-list");
+    setXtagList(appProperties.refresh_AKA[appProperties.speech.locale], "AKA-restart-list");
 
     document.getElementById('server-speak').toggled = appProperties.speech.server_speak;
     document.getElementById('server-speak-module').value = appProperties.speech.module;
@@ -1229,20 +975,18 @@ async function setHTMLContent() {
         itemOn.onclick = () => {
             setRuleGroup(BCP47[i].tag);
             getVoices(BCP47[i].tag);
-            resetDirectAkaByAction(true);
-            resetDirectAkaBySentence(true);
-            currentKeyWord = null;
         };
         let labelOn = document.createElement("x-label");
         labelOn.innerHTML = BCP47[i].tag+" : "+BCP47[i].region;
         itemOn.appendChild(labelOn);
         menuOn.appendChild(itemOn);
     };
-    document.getElementById(currentlanguage).toggled = true;
+    document.getElementById(appProperties.speech.locale).toggled = true;
     document.getElementById('timout-listen').value = appProperties.listen.timeout;
     document.getElementById('timout-speak').value = appProperties.speech.timeout;
     
     // Voice
+    let currentlanguage = appProperties.speech.locale;
     document.getElementById(appProperties.voices.type[currentlanguage]).toggled = true;
     setXtagList(appProperties.voices.active[currentlanguage][appProperties.voices.type[currentlanguage]], "active-voices");
     let availablevoices = document.getElementById('avalaible-voices');
@@ -1272,19 +1016,19 @@ async function setHTMLContent() {
     }
 
     // Rules
-    setXtagList(appProperties.locale[currentlanguage].tts_thank, "thx-rule");
-    setXtagList(appProperties.locale[currentlanguage].tts_cancel, "stop-rule");
-    setXtagList(appProperties.locale[currentlanguage].tts_restoreContext, "listen-answer");
-    setXtagList(appProperties.locale[currentlanguage].tts_restart_restoreContext, "listen-again-answer");
-    setXtagList(appProperties.locale[currentlanguage].restart, "askme-again-answer");
-    setXtagList(appProperties.locale[currentlanguage].answers_thank, "thx-answer");
-    setXtagList(appProperties.locale[currentlanguage].answers_cancel, "stop-answer");
+    setXtagList(appProperties.locale[appProperties.speech.locale].tts_thank, "thx-rule");
+    setXtagList(appProperties.locale[appProperties.speech.locale].tts_cancel, "stop-rule");
+    setXtagList(appProperties.locale[appProperties.speech.locale].tts_restoreContext, "listen-answer");
+    setXtagList(appProperties.locale[appProperties.speech.locale].tts_restart_restoreContext, "listen-again-answer");
+    setXtagList(appProperties.locale[appProperties.speech.locale].restart, "askme-again-answer");
+    setXtagList(appProperties.locale[appProperties.speech.locale].answers_thank, "thx-answer");
+    setXtagList(appProperties.locale[appProperties.speech.locale].answers_cancel, "stop-answer");
 
     // Intercom
-    setXtagList(appProperties.intercom.locale[currentlanguage].rules, "activate-intercom");
-    setXtagList(appProperties.intercom.locale[currentlanguage].global, "activate-global-intercom");
-    setXtagList(appProperties.intercom.locale[currentlanguage].start, "answer-intercom");
-    setXtagList(appProperties.intercom.locale[currentlanguage].send, "send-intercom");
+    setXtagList(appProperties.intercom.locale[appProperties.speech.locale].rules, "activate-intercom");
+    setXtagList(appProperties.intercom.locale[appProperties.speech.locale].global, "activate-global-intercom");
+    setXtagList(appProperties.intercom.locale[appProperties.speech.locale].start, "answer-intercom");
+    setXtagList(appProperties.intercom.locale[appProperties.speech.locale].send, "send-intercom");
     document.getElementById('silence-intercom').value = appProperties.intercom.silence;
     document.getElementById('thresholdStart-intercom').value = appProperties.intercom.thresholdStart;
     document.getElementById('thresholdStop-intercom').value = appProperties.intercom.thresholdStop;
@@ -1361,19 +1105,6 @@ async function setLangTargets() {
     document.getElementById('dialog-label').innerHTML = await Lget("settings", "dialog");
     document.getElementById('recognizer-type-label').innerHTML = await Lget("settings", "recognizerType");
     document.getElementById('AKA-label').innerHTML = await Lget("settings", "AKALabel");
-
-    document.getElementById('AKA-action-label').innerHTML = await Lget("settings", "actionLabel");
-    document.getElementById('AKA-options-label').innerHTML = await Lget("settings", "optionLabel");
-    document.getElementById('AKA-action-indexOf-label').innerHTML = await Lget("settings", "indexOfLabel");
-    document.getElementById('AKA-sentence-indexOf-label').innerHTML = await Lget("settings", "indexOfLabel");
-    document.getElementById('select-AKA-label').innerHTML = await Lget("settings", "newLabel");
-    document.getElementById('nlp-AKA-label').innerHTML = await Lget("settings", "bySentence");
-    document.getElementById('action-AKA-label').innerHTML = await Lget("settings", "byAction");
-    document.getElementById('save-AKA-plugin-label').innerHTML = await Lget("settings", "saveAction");
-    document.getElementById('delete-AKA-plugin-label').innerHTML = await Lget("settings", "deleteAction");
-    document.getElementById('new-AKA-plugin-label').innerHTML = await Lget("settings", "newAKALabel");
-    document.getElementById("select-direct-AKA").toggled = true;
-
     document.getElementById('AKA-separator-label').innerHTML = await Lget("settings", "AKASeparatorLabel");
     document.getElementById('AKA-restart-label').innerHTML = await Lget("settings", "AKARestartLabel");
     document.getElementById('server-speak-label').innerHTML = await Lget("settings", "serverSpeak");

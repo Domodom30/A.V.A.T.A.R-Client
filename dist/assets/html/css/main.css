@@ -1,4 +1,4 @@
-body, html {
+/* body, html {
   font: 12px helvetica neue, helvetica, arial, sans-serif;
   width : 100%;
   height: 100%;
@@ -9,7 +9,9 @@ body, html {
 :root {
   --resizer-size:18px;
   --border-size:5px;
-}
+} */
+
+@import url(./base.css);
 
 #body-div{
   width : 100%;
@@ -40,7 +42,7 @@ body, html {
   max-width: 99%;
   min-height: 165px;
   max-height: 99%;
-  border: var(--border-size) ridge #2196F3;
+  border: var(--border-size) ridge var(--primary);
   background:  #000000;
   opacity: 1;
   overflow: hidden;
@@ -54,7 +56,7 @@ body, html {
   top: 0px;
   position: absolute;
   cursor: move;
-  background-color: #2196F3;
+  background-color: var(--primary) !important;
   color: #fff;
   text-align: center;
 }
@@ -86,6 +88,9 @@ dialog.notification::backdrop {
 }
 
 #notification {
+  font-family: "Raleway", sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 0.6em !important;
   position: fixed;
   top: -50px;
 }
@@ -101,6 +106,7 @@ dialog.notification::backdrop {
   pointer-events: all;
   overflow: hidden;
 }
+
 svg {
   display: block;
   width: 100%;
@@ -110,13 +116,15 @@ svg {
   position:absolute;
   cursor: move;
 }
-h1 {
+
+/* h1 {
   width: 100%;
   font-family: sans-serif;
   position:absolute;
   text-align:center;
   color:white;
-}
+} */
+
 .db-text {
   font-size: 13px;
   width: max-content;

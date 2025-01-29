@@ -1,1 +1,13 @@
-{"modules":{"chrome":{"port":5200,"key":"","cert":"","address":"","timeout_ready":10,"headless":true,"log":false}}}
+{
+  "modules": {
+    "chrome": {
+      "port": 5200,
+      "key": "salon.key",
+      "cert": "salon.crt",
+      "address": "salon",
+      "timeout_ready": 10,
+      "headless": true,
+      "log": false
+    }
+  }
+}

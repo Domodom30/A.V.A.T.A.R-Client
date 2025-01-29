@@ -1,96 +1,108 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
-    <script src="../../node_modules/xel/xel.js" type="module"></script>
-    <meta name="xel-theme" content="../../node_modules/xel/themes/cupertino-dark.css">
-    <meta name="xel-accent-color" content="purple">
-    <meta name="xel-icons" content="../../node_modules/xel/icons/fluent.svg">
-    <link href="./css/backupRestore.css" rel="stylesheet" type="text/css">
-  </head>
-  <body id="body">
 
-    <x-tabs class="action-tab">
-        <x-tab selected class="tabProps cursor-pointer" id="backup" style="font-size: 13px; white-space: nowrap;">
-          <x-label></x-label>
-        </x-tab>
-        <x-tab class="tabProps cursor-pointer" id="restore" style="font-size: 13px; white-space: nowrap;">
-          <x-label></x-label>
-        </x-tab>
-        <x-tab class="tabProps cursor-pointer" id="delete" style="font-size: 13px; white-space: nowrap;">
-          <x-label></x-label>
-        </x-tab>
-    </x-tabs> 
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
 
-    <div id="main">
-        <form id="backup-tab" style="height: 120px; display: block;" class="backup-tab">
-            <x-card class="propertyXtab">
-              <div class="menu-div" style="margin-top: 15px;">
-                <img class="img" id="backup-properties-img" src="../images/icons/notdone.png" alt=""/>
-                <x-checkbox size="small" id="backup-properties" class="top-10"><x-label id="backup-properties-label"></x-label></x-checkbox>
-              </div>
-              <div class="menu-div">
-                <img class="img" id="backup-interface-img" src="../images/icons/notdone.png" alt=""/>
-                <x-checkbox size="small" id="backup-interface" class="top-10"><x-label id="backup-interface-label"></x-label></x-checkbox>
-              </div>
-              <div class="menu-div">
-                <img class="img" id="backup-plugin-img" src="../images/icons/notdone.png" alt=""/>
-                <x-checkbox size="small" id="backup-plugin" class="top-10"><x-label id="backup-plugin-label"></x-label></x-checkbox>
-              </div>
-            </x-card>
-        </form>
+  <script src="../../node_modules/xel/xel.js" type="module"></script>
+  <meta name="xel-theme" content="../../node_modules/xel/themes/adwaita-dark.css">
+  <meta name="xel-accent-color" content="blue">
+  <meta name="xel-icons" content="../../node_modules/xel/icons/fluent.svg">
 
-        <form id="delete-tab" class="delete-tab" style="display: none; height: 120px;">
-          <x-card class="propertyXtab">
-            <div class="menu-div" style="margin-top: 15px;">
-              <img class="img" id="delete-properties-img" src="../images/icons/notdone.png" alt=""/>
-              <x-checkbox size="small" id="delete-properties" class="top-10"><x-label id="delete-properties-label"></x-label></x-checkbox>
-            </div>
-            <div class="menu-div">
-              <img class="img" id="delete-interface-img" src="../images/icons/notdone.png" alt=""/> 
-              <x-checkbox size="small" id="delete-interface" class="top-10"><x-label id="delete-interface-label"></x-label></x-checkbox>
-            </div>
-          </x-card>
-      </form>
+  <link href="./css/backupRestore.css" rel="stylesheet" type="text/css">
+</head>
 
-        <form id="restore-tab" class="restore-tab" style="display: none; height: 120px;">
-            <x-card class="propertyXtab">
-              <div class="menu-div" style="margin-top: 15px;">
-                <img class="img" id="restore-properties-img" src="../images/icons/notdone.png" alt=""/>
-                <x-checkbox size="small" id="restore-properties" class="top-10"><x-label id="restore-properties-label"></x-label></x-checkbox>
-              </div>
-              <div class="menu-div">
-                <img class="img" id="restore-interface-img" src="../images/icons/notdone.png" alt=""/> 
-                <x-checkbox size="small" id="restore-interface" class="top-10"><x-label id="restore-interface-label"></x-label></x-checkbox>
-              </div>
-              <div class="menu-div">
-                <img class="img" id="restore-plugin-img" src="../images/icons/notdone.png" alt=""/>
-                <x-checkbox size="small" id="restore-plugin" class="top-10"><x-label id="restore-plugin-label"></x-label></x-checkbox>
-              </div>
-            </x-card>
-        </form>
+<body id="body">
 
-        <x-label style="margin-top: 5px; margin-left: 15px;" id="folder-location-label"></x-label>
-        <div id="folder-div">
-            <x-input id="folder" style="width: 100%; max-width: 100%;" size="small"><x-label></x-label></x-input>
-            <x-button class="cursor-pointer" id="select-folder" style="font-size: 13px; margin-left: 5px;" size="small">
-                <x-label id="folder-label"></x-label>
-            </x-button>
-        </div>
+  <x-tabs>
+    <x-tab selected id="backup">
+      <x-label id="backup-label"></x-label>
+    </x-tab>
+    <x-tab id="restore">
+      <x-label id="restore-label"></x-label>
+    </x-tab>
+    <x-tab id="delete">
+      <x-label id="delete-label"></x-label>
+    </x-tab>
+  </x-tabs>
 
-        <x-box id="buttons-manage">
-            <x-button id="save" class="cursor-pointer" size="small">
-              <x-label id="label-save"></x-label>
-            </x-button>
-            <x-button style="margin-left: 15px;" id="exit" size="small" class="cursor-pointer">
-              <x-label id="label-quit"></x-label>
-            </x-button>
+  <div id="main">
+    <form id="backup-tab">
+      <x-card>
+        <x-box>
+          <img class="img" id="backup-properties-img" src="../images/icons/notdone.png" alt="" />
+          <x-checkbox size="small" id="backup-properties"><x-label id="backup-properties-label"></x-label></x-checkbox>
         </x-box>
+        <x-box>
+          <img class="img" id="backup-interface-img" src="../images/icons/notdone.png" alt="" />
+          <x-checkbox size="small" id="backup-interface"><x-label id="backup-interface-label"></x-label></x-checkbox>
+        </x-box>
+        <x-box>
+          <img class="img" id="backup-plugin-img" src="../images/icons/notdone.png" alt="" />
+          <x-checkbox size="small" id="backup-plugin"><x-label id="backup-plugin-label"></x-label></x-checkbox>
+        </x-box>
+      </x-card>
+    </form>
 
-    </div>  
+    <form id="delete-tab" style="display: none;">
+      <x-card>
+        <x-box>
+          <img class="img" id="delete-properties-img" src="../images/icons/notdone.png" alt="" />
+          <x-checkbox size="small" id="delete-properties"><x-label id="delete-properties-label"></x-label></x-checkbox>
+        </x-box>
+        <x-box>
+          <img class="img" id="delete-interface-img" src="../images/icons/notdone.png" alt="" />
+          <x-checkbox size="small" id="delete-interface"><x-label id="delete-interface-label"></x-label></x-checkbox>
+        </x-box>
+      </x-card>
+    </form>
 
-    <x-notification id="notification"></x-notification>
-    <script src="../../backupRestore-renderer.js"></script>
-  </body>
+    <form id="restore-tab" style="display: none;">
+      <x-card>
+        <x-box>
+          <img class="img" id="restore-properties-img" src="../images/icons/notdone.png" alt="" />
+          <x-checkbox size="small" id="restore-properties"><x-label
+              id="restore-properties-label"></x-label></x-checkbox>
+        </x-box>
+        <x-box>
+          <img class="img" id="restore-interface-img" src="../images/icons/notdone.png" alt="" />
+          <x-checkbox size="small" id="restore-interface"><x-label id="restore-interface-label"></x-label></x-checkbox>
+        </x-box>
+        <x-box>
+          <img class="img" id="restore-plugin-img" src="../images/icons/notdone.png" alt="" />
+          <x-checkbox size="small" id="restore-plugin"><x-label id="restore-plugin-label"></x-label></x-checkbox>
+        </x-box>
+      </x-card>
+    </form>
+
+    <x-card>
+      <x-box><x-label id="folder-location-label" size="small"></x-label></x-box>
+      <x-box id="folder-div">
+        <x-input id="folder" size="small" class="max-width-500"></x-input>
+        <x-button class="button-primary" id="select-folder" size="small">
+          <x-icon href='#folder'></x-icon>
+          <x-label id="folder-label" size="small"></x-label>
+        </x-button>
+      </x-box>
+    </x-card>
+
+
+      <x-box class="buttons-manage">
+        <x-button id="save" class="button-success" size="small">
+          <x-icon href='#edit'></x-icon>
+          <x-label id="label-save" size="small"></x-label>
+        </x-button>
+        <x-button id="exit" size="small" class="button-close">
+          <x-icon href='#logout'></x-icon>
+          <x-label id="label-quit"></x-label>
+        </x-button>
+      </x-box>
+  </div>
+
+  <x-notification id="notification"></x-notification>
+  <script src="../../backupRestore-renderer.js"></script>
+</body>
+
 </html>
