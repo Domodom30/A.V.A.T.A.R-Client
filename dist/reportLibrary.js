@@ -52,7 +52,7 @@ const initJsonPackage = (folder) => {
     });
 
     auditProcess.on('close', () => {
-      if (stderr) {
+      if (stderr && stderr.indexOf('deprecated') === -1) {
         error(L.get(["infos.standardError", 'init', stderr]));
         return resolve(false);
       }
